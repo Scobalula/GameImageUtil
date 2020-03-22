@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using PhilLibX.Imaging;
+using PhilLibX.Mathematics;
 
 namespace CoDImageUtil
 {
@@ -236,7 +237,7 @@ namespace CoDImageUtil
         /// </summary>
         private void SplitNOG(string imagePath, string extension, ScratchImage.DXGIFormat outFormat, string outputPath = null)
         {
-            using(var inputImage = new ScratchImage(imagePath))
+            using (var inputImage = new ScratchImage(imagePath))
             {
                 // Force the image to a standard format
                 inputImage.ConvertImage(ScratchImage.DXGIFormat.R8G8B8A8UNORM);
@@ -265,14 +266,82 @@ namespace CoDImageUtil
                     aoPixels[i + 3] = 0xFF;
                 }
 
-                if(outputPath == null)
+                if (outputPath == null)
                     outputPath = Path.Combine(Path.GetDirectoryName(imagePath), Path.GetFileNameWithoutExtension(imagePath).Split(new string[] { "_n&", "_n_" }, StringSplitOptions.None)[0]);
 
                 using (var gloss = new ScratchImage(inputImage.Metadata, glossPixels))
                 using (var normal = new ScratchImage(inputImage.Metadata, normalPixels))
                 using (var ao = new ScratchImage(inputImage.Metadata, aoPixels))
                 {
-                    if(extension == ".dds")
+                    if (extension == ".dds")
+                    {
+                        gloss.ConvertImage(outFormat);
+                        normal.ConvertImage(outFormat);
+                        ao.ConvertImage(outFormat);
+                    }
+
+                    gloss.Save(outputPath + "_g" + extension);
+                    normal.Save(outputPath + "_n" + extension);
+                    ao.Save(outputPath + "_o" + extension);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Splits normal gloss occlusion
+        /// </summary>
+        private void SplitNOGExperimental(string imagePath, string extension, ScratchImage.DXGIFormat outFormat, string outputPath = null)
+        {
+            using (var inputImage = new ScratchImage(imagePath))
+            {
+                // Force the image to a standard format
+                inputImage.ConvertImage(ScratchImage.DXGIFormat.R8G8B8A8UNORM);
+
+                var inputPixels = inputImage.GetPixels();
+                var glossPixels = new byte[inputPixels.Length];
+                var normalPixels = new byte[inputPixels.Length];
+                var aoPixels = new byte[inputPixels.Length];
+
+                for (int i = 0; i < inputPixels.Length; i += 4)
+                {
+                    // Copy Gloss
+                    glossPixels[i + 0] = inputPixels[i];
+                    glossPixels[i + 1] = inputPixels[i];
+                    glossPixels[i + 2] = inputPixels[i];
+                    glossPixels[i + 3] = 0xFF;
+                    // Compute Normal Map (Only XY is stored)
+                    normalPixels[i + 0] = inputPixels[i + 1];
+                    normalPixels[i + 1] = inputPixels[i + 3];
+                    normalPixels[i + 2] = Helpers.CalculateBlueValue(inputPixels[i + 1], inputPixels[i + 3]);
+                    normalPixels[i + 3] = 0xFF;
+
+                    var normalVector = ((new Vector3(normalPixels[i + 0] / 255.0f, normalPixels[i + 1] / 255.0f, normalPixels[i + 2] / 255.0f) * 2.0f) - 1.0f).Normalize();
+
+                    var x = (normalVector.X - normalVector.Y) * 0.5f;
+                    var y = (normalVector.X + normalVector.Y) * 0.5f;
+
+                    var resultVector = new Vector3(x, y, 0.0f);
+
+                    normalPixels[i + 0] = (byte)(Helpers.Clamp((x + 1.0) / 2.0, 1.0, 0.0) * 255);
+                    normalPixels[i + 1] = (byte)(Helpers.Clamp((y + 1.0) / 2.0, 1.0, 0.0) * 255);
+                    normalPixels[i + 2] = Helpers.CalculateBlueValue(normalPixels[i + 0], normalPixels[i + 1]);
+
+
+                    // Copy Ambient Occlusion
+                    aoPixels[i + 0] = inputPixels[i + 2];
+                    aoPixels[i + 1] = inputPixels[i + 2];
+                    aoPixels[i + 2] = inputPixels[i + 2];
+                    aoPixels[i + 3] = 0xFF;
+                }
+
+                if (outputPath == null)
+                    outputPath = Path.Combine(Path.GetDirectoryName(imagePath), Path.GetFileNameWithoutExtension(imagePath).Split(new string[] { "_n&", "_n_" }, StringSplitOptions.None)[0]);
+
+                using (var gloss = new ScratchImage(inputImage.Metadata, glossPixels))
+                using (var normal = new ScratchImage(inputImage.Metadata, normalPixels))
+                using (var ao = new ScratchImage(inputImage.Metadata, aoPixels))
+                {
+                    if (extension == ".dds")
                     {
                         gloss.ConvertImage(outFormat);
                         normal.ConvertImage(outFormat);
@@ -335,6 +404,55 @@ namespace CoDImageUtil
         }
 
         /// <summary>
+        /// Splits by color and alpha
+        /// </summary>
+        private void MergeColorAlpha(string imagePath, string extension, ScratchImage.DXGIFormat outFormat, string outputPath = null)
+        {
+            var alphaPath = Path.Combine(Path.GetDirectoryName(imagePath), Path.GetFileNameWithoutExtension(imagePath) + "_alpha" + Path.GetExtension(imagePath));
+
+            using (var alphaImage = new ScratchImage(alphaPath))
+            using (var inputImage = new ScratchImage(imagePath))
+            {
+                // Force the image to a standard format
+                inputImage.ConvertImage(ScratchImage.DXGIFormat.R8G8B8A8UNORM);
+                alphaImage.ConvertImage(ScratchImage.DXGIFormat.R8G8B8A8UNORM);
+
+                alphaImage.Resize(inputImage.Width, inputImage.Height);
+
+                var alphaPixels = alphaImage.GetPixels();
+                var inputPixels = inputImage.GetPixels();
+
+                var resultPixels = new byte[inputPixels.Length];
+
+                for (int i = 0; i < inputPixels.Length; i += 4)
+                {
+                    //// Copy Gloss
+                    //resultPixels[i + 0] = inputPixels[i + 0];
+                    //resultPixels[i + 1] = inputPixels[i + 1];
+                    //resultPixels[i + 2] = inputPixels[i + 2];
+                    //resultPixels[i + 3] = (byte)(((int)(alphaPixels[i] / 2.0) ^ 0xFF));
+                    resultPixels[i + 0] = inputPixels[i + 0];
+                    resultPixels[i + 1] = inputPixels[i + 1];
+                    resultPixels[i + 2] = inputPixels[i + 2];
+                    resultPixels[i + 3] = alphaPixels[i];
+                }
+
+                if (outputPath == null)
+                    outputPath = Path.Combine(
+                        Path.GetDirectoryName(imagePath),
+                        Path.GetFileNameWithoutExtension(imagePath).Split(new string[] { "&" }, StringSplitOptions.None)[0].Replace("-", "_").Replace("~", ""));
+
+                using (var result = new ScratchImage(inputImage.Metadata, resultPixels))
+                {
+                    if (extension == ".dds")
+                        result.ConvertImage(outFormat);
+
+                    result.Save(outputPath + extension);
+                }
+            }
+        }
+
+        /// <summary>
         /// Splits Color and Spec from IW
         /// </summary>
         private void SplitCSIW(string imagePath, string extension, ScratchImage.DXGIFormat outFormat, string outputPath = null)
@@ -384,6 +502,7 @@ namespace CoDImageUtil
                 }
             }
         }
+
 
         /// <summary>
         /// Splits Specular Color by Mask image with same name
@@ -485,6 +604,9 @@ namespace CoDImageUtil
                 case "Split Normal/Gloss/Occlusion (CoD IW/MW 2019)":
                     SplitNOG(imagePath, extension, outFormat, outputPath);
                     break;
+                case "Split Normal/Gloss/Occlusion (CoD IW/MW 2019) (Experimental Normal Map Fix)":
+                    SplitNOGExperimental(imagePath, extension, outFormat, outputPath);
+                    break;
                 case "Split Specular Color (CoD IW/MW 2019)":
                     SplitCSIW(imagePath, extension, outFormat, outputPath);
                     break;
@@ -496,6 +618,9 @@ namespace CoDImageUtil
                     break;
                 case "Remove Alpha":
                     RemoveAlpha(imagePath, extension, outFormat, outputPath);
+                    break;
+                case "Merge RGB/A":
+                    MergeColorAlpha(imagePath, extension, outFormat, outputPath);
                     break;
                 case "Automatic":
                     ProcessImage(imagePath, extension, outFormat, DetectImageMode(Path.GetFileNameWithoutExtension(imagePath)), outputPath);
@@ -635,6 +760,101 @@ namespace CoDImageUtil
             }).Start();
         }
 
+        private void ProcessCastFiles(string[] files)
+        {
+            var progressWindow = new ProgressWindow()
+            {
+                Owner = this,
+                Title = "CoDImageUtil | Working"
+            };
+
+            var mode = Mode.SelectedItem.ToString();
+            var format = Helpers.GetDXGIFormat(DDSFormat.SelectedItem.ToString());
+            var extension = OutputFormat.SelectedItem.ToString().ToLower();
+
+            Dispatcher.BeginInvoke(new Action(() => progressWindow.ShowDialog()));
+            progressWindow.SetProgressCount(files.Length);
+            progressWindow.SetProgressMessage("Processing Cast Files...");
+
+            new Thread(() =>
+            {
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        progressWindow.SetProgressMessage(string.Format("Processing {0}...", Path.GetFileName(file)));
+
+                        var images = new Dictionary<string, string>();
+
+                        var cast = new Cast();
+                        cast.Load(file);
+
+                        var dir = Path.GetDirectoryName(file);
+
+                        foreach (var root in cast.RootNodes)
+                        {
+                            foreach (var model in root.Value.ChildrenOfType<CastModel>())
+                            {
+                                foreach (var material in model.Materials)
+                                {
+                                    var mtlName = material.Name;
+
+                                    Console.WriteLine(mtlName);
+
+                                    foreach (var slot in material.Slots)
+                                    {
+                                        try
+                                        {
+                                            if (slot.Value is CastFile castFile)
+                                            {
+                                                var curPath = Path.Combine(dir, castFile.Path);
+
+                                                if(File.Exists(curPath))
+                                                {
+                                                    var newPath = Path.Combine(dir, mtlName, string.Format("{0}_{1}", mtlName, slot.Key));
+
+                                                    Console.WriteLine(newPath);
+
+                                                    Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+
+                                                    switch (slot.Key)
+                                                    {
+                                                        case "normal":
+                                                            ConvertXYNormal(curPath, extension, format, newPath);
+                                                            break;
+                                                        default:
+                                                            ConvertImage(curPath, extension, format, newPath);
+                                                            break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        progressWindow.SetProgressCount(images.Count);
+
+                        if (progressWindow.IncrementProgress())
+                            break;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+
+                progressWindow.SetProgressMessage("Complete");
+                progressWindow.ProgressComplete();
+            }).Start();
+        }
+
+
         /// <summary>
         /// Handles files dropped onto the window
         /// </summary>
@@ -650,12 +870,24 @@ namespace CoDImageUtil
                     {
                         ProcessMaterials(files);
                     }
+                    else if (Path.GetExtension(files[0]) == ".cast")
+                    {
+                        ProcessCastFiles(files);
+                    }
                     else
                     {
                         ProcessImages(files);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Cleans up on close
+        /// </summary>
+        private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ViewModel.CurrentSettings.Save("CoDImageUtilSettings.cfg");
         }
     }
 }

@@ -44,9 +44,6 @@
     <ApplicationIcon>gigantic.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PhilLibX">
-      <HintPath>Libraries\PhilLibX.dll</HintPath>
-    </Reference>
     <Reference Include="PhilLibX.Interop">
       <HintPath>Libraries\PhilLibX.Interop.dll</HintPath>
     </Reference>
@@ -71,6 +68,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Cast.cs" />
+    <Compile Include="Settings.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -154,6 +153,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="gigantic.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\PhilLibX\src\PhilLibX\PhilLibX\PhilLibX.csproj">
+      <Project>{0f468d5b-2f30-42f5-9043-920040d83d9d}</Project>
+      <Name>PhilLibX</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,10 +8,11 @@
         Title="CoDImageUtil | By Scobalula" 
         Height="480"
         Width="848"
+        Closing="WindowClosing"
         ResizeMode="CanMinimize">
     <Grid Background="#FF21252B">
         <Label Content="Output Format" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Width="94" Foreground="White"/>
-        <ComboBox x:Name="OutputFormat" HorizontalAlignment="Left" SelectionChanged="OutputFormatChanged" VerticalContentAlignment="Center"  SelectedIndex="0" ItemsSource="{Binding ValidExtensions}" Margin="109,0,0,10" VerticalAlignment="Bottom" Width="120" Height="26"/>
+        <ComboBox x:Name="OutputFormat" SelectedIndex="{Binding SelectedIndex}" HorizontalAlignment="Left" SelectionChanged="OutputFormatChanged" VerticalContentAlignment="Center" ItemsSource="{Binding ValidExtensions}" Margin="109,0,0,10" VerticalAlignment="Bottom" Width="120" Height="26"/>
         <Label Content="Output DDS Format" Visibility="{Binding DXGIVisibility}" HorizontalAlignment="Left" Margin="234,0,0,10" VerticalAlignment="Bottom" Width="117" Foreground="White"/>
         <ComboBox x:Name="DDSFormat" HorizontalAlignment="Left" Visibility="{Binding DXGIVisibility}" VerticalContentAlignment="Center"  SelectedIndex="0" ItemsSource="{Binding ValidDXGIFormats}" Margin="356,0,0,10" VerticalAlignment="Bottom" Width="120" Height="26"/>
         <Label Content="Mode" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="48" Foreground="White"/>
