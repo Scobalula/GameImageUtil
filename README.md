@@ -23,15 +23,23 @@ CoDImageUtil also accepts images from the material text files Greyhound produces
 
 CoDImageUtil comes with multiple "modes" for processing different images:
 
+**Drag and Dropping Cast File**
+
+Simply drag and drop cast files and it will convert them. Note that it expects the images to be in a sub folder of the folder the cast file is in, i.e. <model folder>\_images, etc.
+
+**Drag and Dropping Images**
+
 * **Automatic**: this mode attempts to resolve the mode based off the input image name. Currently this is only tested on Call of Duty: Modern Warfare 2019 and Call of Duty: Infinite Warfare, but will support others soon.
 * **Direct Convert**: this mode will simply perform a conversion on the given images, useful for converting DDS files (as the tool supports all DirectXTex formats), etc.
 * **Patch Yellow Normal Map (XY)**: this will compute the Z (B channel) of a BC5 normal map with only XY components, also known as "Yellow Normal Maps" due their color. Note this is also used for Call of Duty: World War 2, even though they are grey, they are XY normal maps.
 * **Patch Grey Normal Map (Older CoDs)**: this converts normal maps from older games that are grey with alpha to XYZ normal maps.
 * **Split Normal/Gloss/Occlusion (CoD IW/MW 2019)**: this splits the Normal/Gloss/Occlusion of NOG/NG/NO images and computes the Z channels value.
+* **Split Normal/Gloss/Occlusion (CoD IW/MW 2019) (Experimental Normal Map Fix)**: same as above, but performs an experimental conversion to convert to standard normal maps.
 * **Split RGB/A (Spec/Gloss, etc.)**: splits RGB/A channels, useful for splitting Specular/Gloss from older games and some newer games.
 * **Split All Channels**: splits all channels into their own images, useful for splitting images like Call of Duty: World War 2's green images that have an image packed into each channel.
 * **Split Specular Color (CoD IW/MW 2019)**: this attempts to split the Color/Specular Color using the metallic mask stored in the alpha channel of the image.
 * **Split Specular Color**: this is the same as the above, only instead of using the alpha channel of the given image, it uses an image with the same name as the given image + _mask and uses the red channel of that image as the mask. For example: `colormap_and_specimage.png` the tool would expect `colormap_and_specimage_mask.png` in the same folder. Useful for Call of Duty: World War 2's images where the mask in the green image, just rename it and drag on the color map.
+* **Merge RGB/A**: Merges an RGB Image with another Image to be the Alpha Mask. It uses an image with the same name as the given image + alpha. For example: `colormap.png` the tool would expect `colormap_alpha.png` in the same folder
 
 ## License/Disclaimer
 
