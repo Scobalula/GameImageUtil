@@ -1,0 +1,20 @@
+﻿<mah:MetroWindow 
+        x:Class="GameImageUtil.ProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        Background="#FF252525"
+        Title="GameImageUtil | Working..."
+        Height="180" Width="550"
+        WindowStartupLocation="CenterOwner"
+        Closing="WindowClosing" 
+        ResizeMode="NoResize">
+    <Grid>
+        <Label Content="{Binding Text, FallbackValue=Working...}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="10,10,10,81" FontSize="24" Foreground="White"/>
+        <ProgressBar Maximum="{Binding Count}" Value="{Binding Value}" IsIndeterminate="{Binding Indeterminate}" Height="32" Margin="10,0,10,40" Foreground="White" VerticalAlignment="Bottom"/>
+        <Button Content="Cancel" Margin="0,0,10,10" Click="RightButtonClick" VerticalAlignment="Bottom" Height="25" ToolTip="Cancel the current task." HorizontalAlignment="Right" Width="75"/>
+    </Grid>
+</mah:MetroWindow>

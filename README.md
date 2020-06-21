@@ -1,51 +1,52 @@
-# CoDImageUtil
-[![Releases](https://img.shields.io/github/downloads/Scobalula/CoDImageUtil/total.svg)](https://github.com/Scobalula/CoDImageUtil/releases) [![License](https://img.shields.io/github/license/Scobalula/CoDImageUtil.svg)](https://github.com/Scobalula/CoDImageUtil/blob/master/LICENSE) [![Discord](https://img.shields.io/badge/chat-Discord-blue.svg)](https://discord.gg/fGVpV39)
+# GameImageUtil
+[![Releases](https://img.shields.io/github/downloads/Scobalula/GameImageUtil/total.svg)](https://github.com/Scobalula/GameImageUtil/releases) [![License](https://img.shields.io/github/license/Scobalula/GameImageUtil.svg)](https://github.com/Scobalula/GameImageUtil/blob/master/LICENSE) [![Discord](https://img.shields.io/badge/chat-Discord-blue.svg)](https://discord.gg/RyqyThu)
 
-CoDImageUtil is a tool to work with and process various images across all Call of Duty games for use within the Call of Duty Mod Tools. As with most games, the developers pack images, etc. and this will help with unpacking them. This tool is released especially for RaGe because of how much I love him.
+GameImageUtil is a tool to work with and process various images from various games for use within rendering, modding, ugc, etc. As with most games, developers pack images, perform conversions, etc. and this will help with unpacking them. This tool is released especially for RaGe and ZeRoY because of how much I love them.
 
 ## Requirements
 
 * Windows 10 x64 or above (Windows 7/8/8.1 should work, but are untested)
-* Microsoft Visual Studio 2017 Runtime ([x86](https://aka.ms/vs/16/release/vc_redist.x86.exe) and [x64](https://aka.ms/vs/16/release/vc_redist.x64.exe)) and .NET Framework 4.7.2
+* Microsoft Visual Studio 2019 Runtime and .NET Framework 4.7.2
 
 ## Links:
-* Discord Server: [https://discord.gg/fGVpV39](https://discord.gg/fGVpV39)
-* Github Repo: [https://github.com/Scobalula/CoDImageUtil](https://github.com/Scobalula/CoDImageUtil)
-* Latest Release: [https://github.com/Scobalula/CoDImageUtil/releases](https://github.com/Scobalula/CoDImageUtil/releases)
+* Discord Server: [https://discord.gg/fGVpV39](https://discord.gg/RyqyThu)
+* Github Repo: [https://github.com/Scobalula/GameImageUtil](https://github.com/Scobalula/GameImageUtil)
+* Latest Release: [https://github.com/Scobalula/GameImageUtil/releases](https://github.com/Scobalula/GameImageUtil/releases)
 
-## Using CoDImageUtil
+## Using GameImageUtil
 
-To use CoDImageUtil, download the latest version from the [Releases](https://github.com/Scobalula/CoDImageUtil/releases) page and run the exe. From here it is pretty easy, just select a mode and output format, and drag and drop images.
-
-CoDImageUtil also accepts images from the material text files Greyhound produces, in this case the mode it overrides the mode and uses the semantic to determine the mode. This currently only works on Call of Duty: Modern Warfare 2019, but will support others soon.
+To use GameImageUtil, download the latest version from the [Releases](https://github.com/Scobalula/GameImageUtil/releases) page and run the exe. From here it is pretty easy, just select a mode and output format, and drag and drop images.
 
 ## Modes
 
-CoDImageUtil comes with multiple "modes" for processing different images:
-
-**Drag and Dropping Cast File**
-
-Simply drag and drop cast files and it will convert them. Note that it expects the images to be in a sub folder of the folder the cast file is in, i.e. <model folder>\_images, etc.
+GameImageUtil comes with multiple built-in "modes" for processing different images:
 
 **Drag and Dropping Images**
 
-* **Automatic**: this mode attempts to resolve the mode based off the input image name. Currently this is only tested on Call of Duty: Modern Warfare 2019 and Call of Duty: Infinite Warfare, but will support others soon.
-* **Direct Convert**: this mode will simply perform a conversion on the given images, useful for converting DDS files (as the tool supports all DirectXTex formats), etc.
-* **Patch Yellow Normal Map (XY)**: this will compute the Z (B channel) of a BC5 normal map with only XY components, also known as "Yellow Normal Maps" due their color. Note this is also used for Call of Duty: World War 2, even though they are grey, they are XY normal maps.
-* **Patch Grey Normal Map (Older CoDs)**: this converts normal maps from older games that are grey with alpha to XYZ normal maps.
-* **Split Normal/Gloss/Occlusion (CoD IW/MW 2019)**: this splits the Normal/Gloss/Occlusion of NOG/NG/NO images and computes the Z channels value.
-* **Split Normal/Gloss/Occlusion (CoD IW/MW 2019) (Experimental Normal Map Fix)**: same as above, but performs an experimental conversion to convert to standard normal maps.
-* **Split RGB/A (Spec/Gloss, etc.)**: splits RGB/A channels, useful for splitting Specular/Gloss from older games and some newer games.
-* **Split All Channels**: splits all channels into their own images, useful for splitting images like Call of Duty: World War 2's green images that have an image packed into each channel.
-* **Split Specular Color (CoD IW/MW 2019)**: this attempts to split the Color/Specular Color using the metallic mask stored in the alpha channel of the image.
-* **Split Specular Color**: this is the same as the above, only instead of using the alpha channel of the given image, it uses an image with the same name as the given image + _mask and uses the red channel of that image as the mask. For example: `colormap_and_specimage.png` the tool would expect `colormap_and_specimage_mask.png` in the same folder. Useful for Call of Duty: World War 2's images where the mask in the green image, just rename it and drag on the color map.
-* **Merge RGB/A**: Merges an RGB Image with another Image to be the Alpha Mask. It uses an image with the same name as the given image + alpha. For example: `colormap.png` the tool would expect `colormap_alpha.png` in the same folder
+* **Automatic**: this mode attempts to resolve the mode based off the input image name. Currently this is only tested on Call of Duty: Modern Warfare 2019 and Call of Duty: Infinite Warfare and Cast, but will support others soon including txt files generated by various tools of mine such as Tyrant.
+* **Cast Files**: This mode will accept Cast files from DTZxPorter's Legion and simply rename the hashed images to match the behaviour of his Maya plug-in (naming each image by their material + slot)
+* **CoD Greyscale XY Normal Map w/ Alpha (MW/WaW/MW2/MW3/BO1)**: this will compute the Z (B channel) of a DXT5 normal map with only XY components and move the channels. These are also known as "Grey Normal Maps" due their color.
+* **CoD S/G/O (Blue Image) (Modern Warfare 2 Remastered)**: This will split the blue image from some Modern Warfare 2 Remastered images that contain a specular color map, gloss map, and occlusion map.
+* **CoD Normal/Gloss/Occlusion (Infinite Warfare/Modern Warfare)**: This will split the NOG/NG image from Infinite Warfare/Modern Warfare that contain a normal map, gloss map, and occlusion map. It will also perform a proper conversion of the Hemi-Octahedron normal map to a standard tangent space normal map.
+* **CoD Spec/Gloss (RGB/A) (Multiple CoDs)**: This will split the specular color map and gloss map from multiple CoD Games.
+* **CoD Specular/Albedo (Infinite Warfare/Modern Warfare)**: This will split the fused specular color map and albedo map from Infinite Warfare/Modern Warfare, using the alpha channel as the mask.
+* **CoD Specular/Albedo (World War II)**: This will split the fused specular color map and albedo map from World War II, using an image with the same name as the input image with _s at the end as the mask. For example: `colormap_and_specimage.png` the tool would expect `colormap_and_specimage_s.png` in the same folder.
+* **XY Normal Map (BC5 Grey/Yellow w/ No Alpha) (Modern Games/Global)**: this will compute the Z (B channel) of a BC5 normal map with only XY components, also known as "Yellow Normal Maps" due their color. Note this is also used for Call of Duty: World War 2, MWR, etc., even though they are grey, they are XY normal maps.
+* **CoD WW2 S/G/O (Green Image) (World War II)**: This splits World War II's green image that contains specular mask, occlusion, and gloss maps.
+* **Direct Convert (Global)**: Simply converts the image to the provided format.
+* **Split Color/Alpha (Global)**: Splits Color and Alpha into their own images.
+* **Split All Channels (Global)**: Splits all channels into their own images.
+* **Merge RGB/Alpha (Global)**: Merges an RGB Image with another Image to be the Alpha Mask. It uses an image with the same name as the given image + _a. For example: `colormap.png` the tool would expect `colormap__a.png` in the same folder.
+
+You're free to write your own scripts, etc. but no support or documentation is provided for such. Just look at the provided scripts to get an idea of how it works.
+
+You can modify the number of threads that GameImageUtil uses, by default it's set to your CPU's "Processor Count" (which includes cores + threads), note that both memory and cpu usuage will increase with higher thread counts.
 
 ## License/Disclaimer
 
-CoDImageUtil is licensed under the General Public License 3.0, you are free to use it under the terms of the GPL, including editing it, etc. to extend it. CoDImageUtil is distributed in the hope it will be useful to, but it comes WITHOUT  ANY WARRANTY, without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, see the [LICENSE](https://github.com/Scobalula/CoDImageUtil/blob/master/LICENSE) file for more information.
+GameImageUtil is licensed under the General Public License 3.0, you are free to use it under the terms of the GPL, including editing it, etc. to extend it. GameImageUtil is distributed in the hope it will be useful to, but it comes WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, see the [LICENSE](https://github.com/Scobalula/GameImageUtil/blob/master/LICENSE) file for more information.
 
-To build CoDImageUtil you can simply load the project and compile, libraries are precompiled and including in the source, it is recommended to use VS 2017 with .NET Framework 4.7.2 as it is what is used for the release builds.
+To build GameImageUtil you can simply load the project and compile, libraries are precompiled and including in the source, it is recommended to use VS 2019 with .NET Framework 4.7.2 as it is what is used for the release builds.
 
 ## Reporting Bugs
 
