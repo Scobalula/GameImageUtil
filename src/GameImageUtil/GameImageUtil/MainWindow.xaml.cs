@@ -19,8 +19,9 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 using System.Windows;
 
 namespace GameImageUtil
@@ -71,6 +72,37 @@ namespace GameImageUtil
         {
             DataContext = ViewModel;
             InitializeComponent();
+
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+        }
+
+        /// <summary>
+        /// Attempts to resolve missing assemblys that are in the lib directories
+        /// Fixes probing "probing privatePath="dir"" failing once outside Releases/Debug....
+        /// </summary>
+        private Assembly ResolveAssembly(object sender, ResolveEventArgs args)
+        {
+            // We should attempt to see if the assembly is already loaded first
+            var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
+
+            if (assembly == null)
+            {
+                try
+                {
+                    // We're given a full string of info, so we need to split for just the name
+                    assembly = Assembly.LoadFrom(Path.Combine("data\\lib", args.Name.Split(',')[0] + ".dll".ToLower()));
+                }
+#if DEBUG
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+#else
+                catch { }
+#endif
+            }
+
+            return assembly;
         }
 
         /// <summary>

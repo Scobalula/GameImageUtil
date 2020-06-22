@@ -80,39 +80,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <None Include="data\scripts\CoDWW2GreenImageProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\AutomaticProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\CastProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\CoDXYNormalMapProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\CoDSpecGlossProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\SplitColorAlphaProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\CoDMW2RBlueImageProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\SplitRGBAProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\MergeRGBAProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\BC5XYNormalMapProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\scripts\DirectConvertProcessor.cs_script">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Compile Include="FileProcessorConfig.cs" />
     <Compile Include="Notifiable.cs" />
     <Compile Include="Settings.cs" />
@@ -157,13 +124,46 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="data\scripts\AutomaticProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\BC5XYNormalMapProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\CastProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="data\scripts\CoDFusedCSProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\CoDMW2RBlueImageProcessor.cs_script">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="data\scripts\CoDNOGImageProcessor.cs_script">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="data\scripts\CoDSpecGlossProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="data\scripts\CoDSplitCSProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\CoDWW2GreenImageProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\CoDXYNormalMapProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\DirectConvertProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\MergeRGBAProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\SplitColorAlphaProcessor.cs_script">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="data\scripts\SplitRGBAProcessor.cs_script">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -179,8 +179,6 @@
     <Resource Include="data\IMPORTANT.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

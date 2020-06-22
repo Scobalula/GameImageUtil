@@ -50,7 +50,7 @@ namespace GameImageUtil
         /// <summary>
         /// Whether or not to check the directory for "infinite_warfare"/"modern_warfare_4"
         /// </summary>
-        public bool CheckDirectoryName { get { return true; } }
+        public bool CheckDirectoryName { get { return false; } }
 
         /// <summary>
         /// Processes the provided image
