@@ -66,7 +66,7 @@ namespace GameImageUtil
                 var outputPath = config.GetValue("OutputPath", "");
 
                 if(string.IsNullOrWhiteSpace(outputPath))
-                    outputPath = Path.Combine(Path.GetDirectoryName(file), Path.GetFileNameWithoutExtension(file).Split(new string[] { "_n&", "_n_" }, StringSplitOptions.None)[0]);
+                    outputPath = Path.Combine(Path.GetDirectoryName(file), Path.GetFileNameWithoutExtension(file).Split(new string[] { "_c&", "_c_" }, StringSplitOptions.None)[0]);
 
                 // Force the image to a standard format
                 inputImage.ConvertImage(ScratchImage.DXGIFormat.R8G8B8A8UNORM);
