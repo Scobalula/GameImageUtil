@@ -84,7 +84,7 @@ namespace GameImageUtil
                             // Compute Metal/Diffuse Mask Values
                             var m = MathUtilities.Clamp(pixel.W - 0.0f, 1.0f, 0.0f) * (1.0f / (1.0f - 0.0f));
                             var d = MathUtilities.Clamp(1.0f - m, 1.0f, 0.0f);
-                            var r = Math.Min(pixel.W, insulatorSpecRange);
+                            var r = Math.Min(pixel.W, 0.0f);
 
                             // Set pixels, clamped to 56/56/56
                             cMap.SetPixel(0, 0, 0, x, y, new Vector4(pixel.X * d, pixel.Y * d, pixel.Z * d, 1.0f));
