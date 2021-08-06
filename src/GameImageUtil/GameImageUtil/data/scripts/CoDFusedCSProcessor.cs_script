@@ -71,8 +71,6 @@ namespace GameImageUtil
                 // Force the image to a standard format
                 inputImage.ConvertImage(ScratchImage.DXGIFormat.R8G8B8A8UNORM);
 
-                const float insulatorSpecRange = 0.1f;
-
                 using (var cMap = new ScratchImage(inputImage.Metadata))
                 using (var sMap = new ScratchImage(inputImage.Metadata))
                 {
@@ -84,7 +82,7 @@ namespace GameImageUtil
                             var pixel = inputImage.GetPixel(0, 0, 0, x, y);
 
                             // Compute Metal/Diffuse Mask Values
-                            var m = MathUtilities.Clamp(pixel.W - insulatorSpecRange, 1.0f, 0.0f) * (1.0f / (1.0f - insulatorSpecRange));
+                            var m = MathUtilities.Clamp(pixel.W - 0.0f, 1.0f, 0.0f) * (1.0f / (1.0f - 0.0f));
                             var d = MathUtilities.Clamp(1.0f - m, 1.0f, 0.0f);
                             var r = Math.Min(pixel.W, insulatorSpecRange);
 
