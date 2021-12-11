@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Numerics;
+using PhilLibX;
 using PhilLibX.Imaging;
 
 namespace GameImageUtil
@@ -68,9 +69,11 @@ namespace GameImageUtil
 
                         var nX = pixel.X * 2.0f - 1.0f;
                         var nY = pixel.Y * 2.0f - 1.0f;
-                        var nZ = 1.0f - (nX * nX) - (nY * nY);
 
-                        image.SetPixel(0, 0, 0, x, y, new Vector4(nX * 0.5f + 0.5f, nY * 0.5f + 0.5f, nZ > 0.0f ? (float)Math.Sqrt(nZ) * 0.5f + 0.5f : 0.0f, 1.0f));
+                        var dot1 = 1.0f - (nX * nX) - (nY * nY);
+                        var nZ = dot1 > 0 ? (float)Math.Sqrt(dot1) : 0.0f;
+
+                        image.SetPixel(0, 0, 0, x, y, new Vector4(nX * 0.5f + 0.5f, nY * 0.5f + 0.5f, MathUtilities.Clamp(nZ * 0.5f + 0.5f, 1.0f, 0.0f), 1.0f));
                     }
                 }
 
