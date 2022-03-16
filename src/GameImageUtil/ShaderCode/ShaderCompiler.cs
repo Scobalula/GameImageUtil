@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Vortice.D3DCompiler;
 using Vortice.Direct3D;
 
-namespace GameImageUtil.Shaders
+namespace GameImageUtil.ShaderCode
 {
     public static class ShaderCompiler
     {

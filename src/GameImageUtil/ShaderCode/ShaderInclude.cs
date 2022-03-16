@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Vortice.Direct3D;
 
-namespace GameImageUtil.Shaders
+namespace GameImageUtil.ShaderCode
 {
     public class ShaderInclude : Include
     {

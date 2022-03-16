@@ -8,7 +8,7 @@ using Vortice.D3DCompiler;
 using Vortice.Direct3D;
 using Vortice.Direct3D11.Shader;
 
-namespace GameImageUtil.Shaders
+namespace GameImageUtil.ShaderCode
 {
     internal class ShaderHelper
     {

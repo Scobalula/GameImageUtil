@@ -1,4 +1,5 @@
 ﻿
+using GameImageUtil.Assets;
 using GameImageUtil.Imaging.DirectXTex;
 using GameImageUtil.ShaderCode;
 using GameImageUtil.Shaders;
