@@ -87,8 +87,8 @@ namespace GameImageUtil
             {
                 device = tempDevice.QueryInterface<ID3D11Device1>();
                 context = tempContext.QueryInterface<ID3D11DeviceContext1>();
-                device.Dispose();
-                context.Dispose();
+                tempDevice.Dispose();
+                tempContext.Dispose();
                 return true;
             }
 

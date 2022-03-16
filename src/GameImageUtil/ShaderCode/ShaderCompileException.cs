@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameImageUtil
+namespace GameImageUtil.Shaders
 {
     public class ShaderCompileException : Exception
     {

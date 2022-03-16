@@ -11,4 +11,12 @@
     <PackageReference Include="Vortice.Direct3D11" Version="2.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GameImageUtil.DirectXTex\GameImageUtil.DirectXTex.vcxproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
+
 </Project>
