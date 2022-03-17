@@ -89,6 +89,8 @@ namespace GameImageUtil.Assets
                                 viewDesc.ViewDimension = ShaderResourceViewDimension.TextureCube;
                                 viewDesc.TextureCube.MipLevels = (int)metadata.MipLevels;
                             }
+
+                            desc.OptionFlags = ResourceOptionFlags.TextureCube;
                         }
                         else if (metadata.ArraySize > 1)
                         {
@@ -131,10 +133,12 @@ namespace GameImageUtil.Assets
                     }
             }
 
+            using var resource = temp;
+
             if(temp == null)
                 throw new Exception($"Failed to create texture.");
 
-            // TODO: Create view
+            return device.Device.CreateShaderResourceView(resource, viewDesc);
         }
     }
 }

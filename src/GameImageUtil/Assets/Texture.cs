@@ -87,6 +87,61 @@ namespace GameImageUtil.Assets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Texture"/> class as an output UAV.
+        /// </summary>
+        /// <param name="owner">The device that owns this texture.</param>
+        /// <param name="name">The name of the image.</param>
+        /// <param name="width">The width of the image.</param>
+        /// <param name="height">The height of the image.</param>
+        /// <param name="cubeMap">Whether or not this is a cube map with multiple images.</param>
+        public Texture(GraphicsDevice owner,
+                       string name,
+                       int width,
+                       int height,
+                       bool cubeMap) : this(owner,
+                                            name,
+                                            width,
+                                            height,
+                                            ScratchImageFormat.R32G32B32A32Float,
+                                            cubeMap)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Texture"/> class as an output UAV.
+        /// </summary>
+        /// <param name="owner">The device that owns this texture.</param>
+        /// <param name="name">The name of the image.</param>
+        /// <param name="width">The width of the image.</param>
+        /// <param name="height">The height of the image.</param>
+        /// <param name="format">The format of the image.</param>
+        /// <param name="cubeMap">Whether or not this is a cube map with multiple images.</param>
+        public Texture(GraphicsDevice owner,
+                       string name,
+                       int width,
+                       int height,
+                       ScratchImageFormat format,
+                       bool cubeMap)
+        {
+            Owner = owner;
+            Name = name;
+            Metadata = new()
+            {
+                Width = (ulong)width,
+                Height = (ulong)height,
+                Depth = 1,
+                ArraySize = (ulong)(cubeMap ? 6 : 1),
+                MipLevels = 1,
+                MiscFlags = cubeMap ? ScratchImageFlags.TextureCube : ScratchImageFlags.None,
+                MiscFlags2 = ScratchImageFlags2.NONE,
+                Dimension = ScratchImageDimension.Texture2D,
+                Format = format
+            };
+            View = TextureHelper.CreateBlankUAV(owner, Metadata);
+            IsOutputTexture = true;
+        }
+
+        /// <summary>
         /// Creates a <see cref="ScratchImage"/> from this image, copying from the GPU.
         /// </summary>
         /// <returns>Resulting scratch image.</returns>
@@ -96,6 +151,16 @@ namespace GameImageUtil.Assets
                 Owner.Device.NativePointer,
                 Owner.Context.NativePointer,
                 View.NativePointer);
+        }
+
+        /// <summary>
+        /// Saves the image to the provided file path.
+        /// </summary>
+        /// <param name="filePath">Path to save the image to.</param>
+        public void Save(string filePath)
+        {
+            using var image = CreateScratchImage();
+            image.Save(filePath);
         }
 
         /// <inheritdoc/>
