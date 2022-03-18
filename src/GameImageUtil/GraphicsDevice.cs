@@ -6,7 +6,7 @@ namespace GameImageUtil
     /// <summary>
     /// A class to hold a graphics device.
     /// </summary>
-    public class GraphicsDevice
+    public class GraphicsDevice : IDisposable
     {
         /// <summary>
         /// Gets the current device.
@@ -37,6 +37,15 @@ namespace GameImageUtil
             Device = device;
             Context = context;
             Adapter = adapter;
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Device.Dispose();
+            Context.Dispose();
+            Adapter.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

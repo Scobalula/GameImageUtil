@@ -9,19 +9,15 @@ using Vortice.Direct3D11;
 using Vortice.Direct3D11.Debug;
 using Vortice.Direct3D11.Shader;
 using GameImageUtil.ShaderCode;
+using GameImageUtil.Assets;
 
 namespace GameImageUtil.Shaders
 {
     /// <summary>
     /// A class to hold a compute shader.
     /// </summary>
-    public class ComputeShader
+    public class ComputeShader : GraphicsObject
     {
-        /// <summary>
-        /// Gets the <see cref="GraphicsDevice"/> that owns this.
-        /// </summary>
-        public GraphicsDevice Owner { get; private set; }
-
         /// <summary>
         /// Gets the name of the compute shader.
         /// </summary>
@@ -73,6 +69,120 @@ namespace GameImageUtil.Shaders
             XThreads       = x;
             YThreads       = y;
             ZThreads       = z;
+        }
+
+        /// <summary>
+        /// Binds the texture to the provided resource with the given name.
+        /// </summary>
+        /// <param name="resName">Name of the resource within the shader.</param>
+        /// <param name="texture">Texture to bind.</param>
+        public void Bind(string resName, Texture texture)
+        {
+            if (!TryGetResource(resName, out var res))
+                throw new Exception();
+
+            if(res.Type == ShaderResourceType.InputTexture)
+            {
+                Owner.Context.CSSetShaderResource(res.Index, texture.View as ID3D11ShaderResourceView);
+            }
+            else
+            {
+                Owner.Context.CSSetUnorderedAccessView(res.Index, texture.View as ID3D11UnorderedAccessView);
+            }
+        }
+
+        /// <summary>
+        /// Binds the texture to the provided resource with the given name.
+        /// </summary>
+        /// <param name="texture">Textures to bind.</param>
+        public void Bind(params Texture[] textures)
+        {
+            foreach (var texture in textures)
+            {
+                Bind(texture.Name, texture);
+            }
+        }
+
+        public bool TryGetResource(string resName, out ShaderResource res)
+        {
+            foreach (var r in Resources)
+            {
+                if(r.Name.Equals(resName, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    res = r;
+                    return true;
+                }
+            }
+
+            res = new();
+            return false;
+        }
+
+        /// <summary>
+        /// Dispatches the compute shader.
+        /// </summary>
+        /// <param name="x">Number of X Threads.</param>
+        /// <param name="y">Number of Y Threads.</param>
+        /// <param name="z">Number of Z Threads.</param>
+        public void Dispatch(int x, int y, int z)
+        {
+            Owner.Context.CSSetShader(Shader);
+            Owner.Context.Dispatch(
+                x / XThreads,
+                y / XThreads,
+                z / XThreads);
+            Owner.Context.CSSetShader(Shader);
+            Owner.Context.Flush();
+        }
+
+        /// <summary>
+        /// Dispatches the compute shader.
+        /// </summary>
+        /// <param name="x">Number of X Threads.</param>
+        /// <param name="y">Number of Y Threads.</param>
+        /// <param name="z">Number of Z Threads.</param>
+        /// <param name="textures"></param>
+        public void Dispatch(int x, int y, int z, params Texture[] textures)
+        {
+            Bind(textures);
+
+            Owner.Context.CSSetShader(Shader);
+            Owner.Context.Dispatch(
+                x / XThreads,
+                y / XThreads,
+                z / XThreads);
+        }
+
+        /// <summary>
+        /// Dispatches the compute shader.
+        /// </summary>
+        /// <param name="x">Number of X Threads.</param>
+        /// <param name="y">Number of Y Threads.</param>
+        /// <param name="z">Number of Z Threads.</param>
+        /// <param name="buffer">Number of Z Threads.</param>
+        /// <param name="textures"></param>
+        public void Dispatch(int x, int y, int z, ShaderConstantBuffer buffer, params Texture[] textures)
+        {
+            Bind(textures);
+
+            if (TryGetResource(buffer.Name, out var res))
+            {
+                buffer.Update();
+                Owner.Context.CSSetConstantBuffer(res.Index, buffer.GraphicsBuffer);
+            }
+
+            Owner.Context.CSSetShader(Shader);
+            Owner.Context.Dispatch(
+                x / XThreads,
+                y / XThreads,
+                z / XThreads);
+        }
+
+        /// <inheritdoc/>
+        public override void Release()
+        {
+            Shader.Dispose();
+            ShaderBlob.Dispose();
         }
     }
 }

@@ -11,9 +11,11 @@ namespace GameImageUtil.ShaderCode
     public static class ShaderCompiler
     {
         public static Blob Compile(string shaderStr,
-                                     ShaderType type,
-                                     ShaderInclude? include)
+                                   ShaderType type,
+                                   ShaderMacro[]? macros,
+                                   ShaderInclude? include)
         {
+            // TODO: Caching based off macros + str?
             // TODO: Move to helper and merge switch
             // TODO: Remove hardcoded SM5.0 
             string entryPoint = type switch
@@ -40,7 +42,7 @@ namespace GameImageUtil.ShaderCode
             // TODO: Set up exception
             if (Compiler.Compile(
                 shaderStr,
-                null!,
+                macros!,
                 include!,
                 entryPoint,
                 "anon",
@@ -50,7 +52,7 @@ namespace GameImageUtil.ShaderCode
                 out var blob,
                 out var errorBlob
                 ).Failure)
-                throw new ShaderCompileException();
+                throw new ShaderCompileException(errorBlob.AsString());
 
 
             return blob;

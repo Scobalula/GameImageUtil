@@ -11,7 +11,7 @@ namespace GameImageUtil.Assets
 {
     internal class TextureHelper
     {
-        public static ID3D11ShaderResourceView CreateBlankUAV(GraphicsDevice device, ScratchImageMetadata metadata)
+        public static ID3D11UnorderedAccessView CreateBlankUAV(GraphicsDevice device, ScratchImageMetadata metadata)
         {
             // TODO: Move texture related stuff to their own methods.
             // TODO: Some params for options.
@@ -21,7 +21,7 @@ namespace GameImageUtil.Assets
                 throw new Exception("Invalid mip levels in metadata, cannot be 0.");
 
             ID3D11Resource? temp = null;
-            var viewDesc = new ShaderResourceViewDescription()
+            var viewDesc = new UnorderedAccessViewDescription()
             {
                 Format = (Vortice.DXGI.Format)metadata.Format
             };
@@ -44,14 +44,12 @@ namespace GameImageUtil.Assets
 
                         if(metadata.ArraySize > 1)
                         {
-                            viewDesc.ViewDimension = ShaderResourceViewDimension.Texture1DArray;
-                            viewDesc.Texture1DArray.MipLevels = (int)metadata.MipLevels;
+                            viewDesc.ViewDimension = UnorderedAccessViewDimension.Texture1DArray;
                             viewDesc.Texture1DArray.ArraySize = (int)metadata.ArraySize;
                         }
                         else
                         {
-                            viewDesc.ViewDimension = ShaderResourceViewDimension.Texture1D;
-                            viewDesc.Texture1D.MipLevels = (int)metadata.MipLevels;
+                            viewDesc.ViewDimension = UnorderedAccessViewDimension.Texture1D;
                         }
 
                         temp = device.Device.CreateTexture1D(desc);
@@ -73,35 +71,14 @@ namespace GameImageUtil.Assets
                             SampleDescription = new Vortice.DXGI.SampleDescription(1, 0)
                         };
 
-                        if (metadata.MiscFlags.HasFlag(ScratchImageFlags.TextureCube))
+                        if (metadata.ArraySize > 1)
                         {
-                            if(metadata.ArraySize > 6)
-                            {
-                                if (metadata.ArraySize % 6 != 0)
-                                    throw new Exception($"Invalid array size for cube array: {metadata.ArraySize}");
-
-                                viewDesc.ViewDimension = ShaderResourceViewDimension.TextureCubeArray;
-                                viewDesc.TextureCubeArray.MipLevels = (int)metadata.MipLevels;
-                                viewDesc.TextureCubeArray.NumCubes = (int)metadata.ArraySize / 6;
-                            }
-                            else
-                            {
-                                viewDesc.ViewDimension = ShaderResourceViewDimension.TextureCube;
-                                viewDesc.TextureCube.MipLevels = (int)metadata.MipLevels;
-                            }
-
-                            desc.OptionFlags = ResourceOptionFlags.TextureCube;
-                        }
-                        else if (metadata.ArraySize > 1)
-                        {
-                            viewDesc.ViewDimension = ShaderResourceViewDimension.Texture2DArray;
-                            viewDesc.Texture2DArray.MipLevels = (int)metadata.MipLevels;
+                            viewDesc.ViewDimension = UnorderedAccessViewDimension.Texture2DArray;
                             viewDesc.Texture2DArray.ArraySize = (int)metadata.ArraySize;
                         }
                         else
                         {
-                            viewDesc.ViewDimension = ShaderResourceViewDimension.Texture2D;
-                            viewDesc.Texture2D.MipLevels = (int)metadata.MipLevels;
+                            viewDesc.ViewDimension = UnorderedAccessViewDimension.Texture2D;
                         }
 
                         temp = device.Device.CreateTexture2D(desc);
@@ -125,8 +102,7 @@ namespace GameImageUtil.Assets
                         if(metadata.ArraySize != 1)
                             throw new Exception($"Invalid array size for 3D Texture: {metadata.ArraySize}");
 
-                        viewDesc.ViewDimension = ShaderResourceViewDimension.Texture3D;
-                        viewDesc.Texture3D.MipLevels = (int)metadata.MipLevels;
+                        viewDesc.ViewDimension = UnorderedAccessViewDimension.Texture3D;
 
                         temp = device.Device.CreateTexture3D(desc);
                         break;
@@ -138,7 +114,7 @@ namespace GameImageUtil.Assets
             if(temp == null)
                 throw new Exception($"Failed to create texture.");
 
-            return device.Device.CreateShaderResourceView(resource, viewDesc);
+            return device.Device.CreateUnorderedAccessView(resource, viewDesc);
         }
     }
 }

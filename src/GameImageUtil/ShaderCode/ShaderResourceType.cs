@@ -17,6 +17,8 @@ namespace GameImageUtil.ShaderCode
 
         Sampler,
 
+        ConstantBuffer,
+
         Unknown = int.MaxValue
     }
 }

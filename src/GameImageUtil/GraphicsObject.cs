@@ -12,6 +12,11 @@ namespace GameImageUtil
     public abstract class GraphicsObject : IDisposable
     {
         /// <summary>
+        /// Gets the <see cref="GraphicsDevice"/> that owns this.
+        /// </summary>
+        public GraphicsDevice Owner { get; set; }
+
+        /// <summary>
         /// Releases resources owned by this graphics object.
         /// </summary>
         public abstract void Release();

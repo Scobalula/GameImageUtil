@@ -15,11 +15,6 @@ namespace GameImageUtil.Assets
     public class Texture : GraphicsObject
     {
         /// <summary>
-        /// Gets the <see cref="GraphicsDevice"/> that owns this.
-        /// </summary>
-        public GraphicsDevice Owner { get; set; }
-
-        /// <summary>
         /// Gets or Sets the name of the texture.
         /// </summary>
         public string Name { get; private set; }
@@ -30,14 +25,14 @@ namespace GameImageUtil.Assets
         public ScratchImageMetadata Metadata { get; private set; }
 
         /// <summary>
-        /// Gets or Sets the view over the resource.
+        /// Gets the view over the resource.
         /// </summary>
-        private ID3D11ShaderResourceView View { get; set; }
+        public ID3D11View View { get; private set; }
 
         /// <summary>
         /// Gets whether or not this texture is an output texture.
         /// </summary>
-        public bool IsOutputTexture { get; set; }
+        public bool IsOutputTexture { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Texture"/> class as an input.

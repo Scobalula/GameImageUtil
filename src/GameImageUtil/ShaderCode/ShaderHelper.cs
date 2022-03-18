@@ -43,6 +43,7 @@ namespace GameImageUtil.ShaderCode
                         ShaderInputType.Texture                    => ShaderResourceType.InputTexture,
                         ShaderInputType.Sampler                    => ShaderResourceType.Sampler,
                         ShaderInputType.UnorderedAccessViewRWTyped => ShaderResourceType.OutputTexture,
+                        ShaderInputType.ConstantBuffer             => ShaderResourceType.ConstantBuffer,
                         _                                          => ShaderResourceType.Unknown
                     }, resource.BindPoint);
             }

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GameImageUtil.DirectXTex\GameImageUtil.DirectXTex.vcxproj" />
+    <ProjectReference Include="..\GameImageUtil\GameImageUtil.csproj" />
+  </ItemGroup>
+
+</Project>
