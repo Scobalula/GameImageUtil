@@ -40,11 +40,10 @@ namespace GameImageUtil.Assets
         /// <param name="owner">The device that owns this texture.</param>
         /// <param name="name">The name of the image.</param>
         /// <param name="filePath">The file to copy to the GPU.</param>
-        public Texture(GraphicsDevice owner, string name, string filePath)
+        public Texture(GraphicsDevice owner, string name, string filePath) : base(owner)
         {
             using var image = new ScratchImage(filePath);
 
-            Owner           = owner;
             Name            = name;
             Metadata        = image.Metadata;
             View            = new ID3D11ShaderResourceView(image.CreateShaderResourceView(owner.Device.NativePointer));
@@ -57,9 +56,8 @@ namespace GameImageUtil.Assets
         /// <param name="owner">The device that owns this texture.</param>
         /// <param name="name">The name of the image.</param>
         /// <param name="image">The scratch image to copy to the GPU.</param>
-        public Texture(GraphicsDevice owner, string name, ScratchImage image)
+        public Texture(GraphicsDevice owner, string name, ScratchImage image) : base(owner)
         {
-            Owner           = owner;
             Name            = name;
             Metadata        = image.Metadata;
             View            = new ID3D11ShaderResourceView(image.CreateShaderResourceView(owner.Device.NativePointer));
@@ -72,9 +70,8 @@ namespace GameImageUtil.Assets
         /// <param name="owner">The device that owns this texture.</param>
         /// <param name="name">The name of the image.</param>
         /// <param name="metadata">The metadata to initialize from.</param>
-        public Texture(GraphicsDevice owner, string name, ScratchImageMetadata metadata)
+        public Texture(GraphicsDevice owner, string name, ScratchImageMetadata metadata) : base(owner)
         {
-            Owner           = owner;
             Name            = name;
             Metadata        = metadata;
             View            = TextureHelper.CreateBlankUAV(owner, metadata);
@@ -116,9 +113,8 @@ namespace GameImageUtil.Assets
                        int width,
                        int height,
                        ScratchImageFormat format,
-                       bool cubeMap)
+                       bool cubeMap) : base(owner)
         {
-            Owner = owner;
             Name = name;
             Metadata = new()
             {

@@ -31,7 +31,7 @@ namespace GameImageUtil.ShaderCode
 
         private ShaderVariableDescription[]? Variables { get; set; }
 
-        public ShaderConstantBuffer(GraphicsDevice device, string name, Blob shaderBlob)
+        public ShaderConstantBuffer(GraphicsDevice owner, string name, Blob shaderBlob) : base(owner)
         {
             Name = name;
 
@@ -55,9 +55,8 @@ namespace GameImageUtil.ShaderCode
                 };
 
                 Variables = new ShaderVariableDescription[refDesc.VariableCount];
-                Owner = device;
                 Name = name;
-                GraphicsBuffer = device.Device.CreateBuffer(desc);
+                GraphicsBuffer = owner.Device.CreateBuffer(desc);
                 Data = new byte[refDesc.Size];
 
                 for (int i = 0; i < refDesc.VariableCount; i++)

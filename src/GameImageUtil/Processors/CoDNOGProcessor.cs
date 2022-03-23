@@ -108,6 +108,8 @@ namespace GameImageUtil.Converters
             var h = (int)texture.Metadata.Width;
 
             Constants.Set("GlossWidth", new Vector2(0.1f, 0.1f));
+            Constants.Set("GlossWidth", new Vector2(0.1f, 0.1f));
+            Constants.Set("GlossWidth", new Vector2(0.1f, 0.1f));
 
             using var gMap = new Texture(NOGShader.Owner, "gloss_output", w, h, ScratchImageFormat.R8G8B8A8UNorm, false);
             using var nMap = new Texture(NOGShader.Owner, "normal_output", w, h, ScratchImageFormat.R8G8B8A8UNorm, false);

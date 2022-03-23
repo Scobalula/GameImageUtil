@@ -56,15 +56,14 @@ namespace GameImageUtil.Shaders
         /// <summary>
         /// Initializes a new instance of a <see cref="ComputeShader"/>.
         /// </summary>
-        /// <param name="device"></param>
+        /// <param name="owner"></param>
         /// <param name="name"></param>
         /// <param name="shaderBlob"></param>
-        public ComputeShader(GraphicsDevice device, string name, Blob shaderBlob)
+        public ComputeShader(GraphicsDevice owner, string name, Blob shaderBlob) : base(owner)
         {
-            Owner          = device;
             Name           = name;
             ShaderBlob     = shaderBlob;
-            Shader         = device.Device.CreateComputeShader(shaderBlob);
+            Shader         = owner.Device.CreateComputeShader(shaderBlob);
             Resources      = ShaderHelper.GenerateResources(shaderBlob, out int x, out int y, out int z);
             XThreads       = x;
             YThreads       = y;

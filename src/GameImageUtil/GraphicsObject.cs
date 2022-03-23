@@ -16,6 +16,11 @@ namespace GameImageUtil
         /// </summary>
         public GraphicsDevice Owner { get; set; }
 
+        public GraphicsObject(GraphicsDevice owner)
+        {
+            Owner = owner;
+        }
+
         /// <summary>
         /// Releases resources owned by this graphics object.
         /// </summary>
