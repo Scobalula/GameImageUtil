@@ -54,7 +54,7 @@ namespace GameImageUtil
             if(!config.ViewModel.Extensions.Contains(Path.GetExtension(file).ToUpper()))
                 return;
 
-            var maskPath = Path.Combine(Path.GetDirectoryName(file), Path.GetFileNameWithoutExtension(file) + "_s" + Path.GetExtension(file));
+            var maskPath = Path.Combine(Path.GetDirectoryName(file), string.Join("_", Path.GetFileNameWithoutExtension(file).Substring(0, Path.GetFileNameWithoutExtension(file).LastIndexOf('_')).Remove(0, 4).Split(new string[] { "~" }, StringSplitOptions.None)[0]).Replace('~', '_').Replace('&', '_').Replace('$', '_').Replace('-', '_') + "_s" + Path.GetExtension(file));
 
             if (!File.Exists(maskPath))
                 throw new ArgumentException("Failed to locate mask image for CoDSplitCSProcessor", "maskPath");
@@ -67,7 +67,7 @@ namespace GameImageUtil
                 var outputPath = config.GetValue("OutputPath", "");
 
                 if (string.IsNullOrWhiteSpace(outputPath))
-                    outputPath = Path.Combine(Path.GetDirectoryName(file), string.Join("_", Path.GetFileNameWithoutExtension(file).Replace("~&-", "").Split(new string[] { "~" }, StringSplitOptions.None)).Replace('~', '_').Replace('&', '_').Replace('$', '_').Replace('-', '_'));
+                    outputPath = Path.Combine(Path.GetDirectoryName(file), string.Join("_", Path.GetFileNameWithoutExtension(file).Substring(0, Path.GetFileNameWithoutExtension(file).LastIndexOf('_')).Remove(0, 4).Split(new string[] { "~" }, StringSplitOptions.None)[0]).Replace('~', '_').Replace('&', '_').Replace('$', '_').Replace('-', '_'));
 
                 // Force the image to a standard format
                 inputImage.ConvertImage(ScratchImage.DXGIFormat.R8G8B8A8UNORM);
