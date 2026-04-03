@@ -1,4 +1,0 @@
-CS Scripts have full access to do whatever they need to do, this also means you should only install scripts you trust
-
-Always double check a script has no malicious code before installing it, if the script is obsfucated, etc. in any way,
-it is recommended to not install it
