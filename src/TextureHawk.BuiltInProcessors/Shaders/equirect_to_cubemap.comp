@@ -1,0 +1,87 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D facePosX;
+layout(set = 0, binding = 2) uniform writeonly image2D faceNegX;
+layout(set = 0, binding = 3) uniform writeonly image2D facePosY;
+layout(set = 0, binding = 4) uniform writeonly image2D faceNegY;
+layout(set = 0, binding = 5) uniform writeonly image2D facePosZ;
+layout(set = 0, binding = 6) uniform writeonly image2D faceNegZ;
+
+layout(push_constant) uniform Params {
+    int faceSize;
+    int upAxis;
+    int mapX;
+    int mapY;
+    int mapZ;
+};
+
+const float PI = 3.14159265358979323846;
+
+float resolveAxis(vec3 dir, int axis) {
+    if (axis == 0) return dir.x;
+    if (axis == 1) return -dir.x;
+    if (axis == 2) return dir.y;
+    if (axis == 3) return -dir.y;
+    if (axis == 4) return dir.z;
+    return -dir.z;
+}
+
+vec2 directionToEquirectUv(vec3 dir) {
+    float theta;
+    float phi;
+
+    if (upAxis == 0) {
+        theta = atan(dir.y, dir.z);
+        phi = acos(clamp(dir.x, -1.0, 1.0));
+    } else if (upAxis == 1) {
+        theta = atan(dir.x, dir.z);
+        phi = acos(clamp(dir.y, -1.0, 1.0));
+    } else {
+        theta = atan(dir.y, dir.x);
+        phi = acos(clamp(dir.z, -1.0, 1.0));
+    }
+
+    if (theta < 0.0)
+        theta += 2.0 * PI;
+    return vec2(theta / (2.0 * PI), phi / PI);
+}
+
+vec3 faceDirection(int face, vec2 uv) {
+    if (face == 0) return normalize(vec3( 1.0, -uv.y, -uv.x));
+    if (face == 1) return normalize(vec3(-1.0, -uv.y,  uv.x));
+    if (face == 2) return normalize(vec3( uv.x,  1.0,  uv.y));
+    if (face == 3) return normalize(vec3( uv.x, -1.0, -uv.y));
+    if (face == 4) return normalize(vec3( uv.x, -uv.y,  1.0));
+    return normalize(vec3(-uv.x, -uv.y, -1.0));
+}
+
+void storeFacePixel(int face, ivec2 pos, vec4 pixel) {
+    if (face == 0) imageStore(facePosX, pos, pixel);
+    else if (face == 1) imageStore(faceNegX, pos, pixel);
+    else if (face == 2) imageStore(facePosY, pos, pixel);
+    else if (face == 3) imageStore(faceNegY, pos, pixel);
+    else if (face == 4) imageStore(facePosZ, pos, pixel);
+    else imageStore(faceNegZ, pos, pixel);
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= faceSize || pos.y >= faceSize)
+        return;
+
+    vec2 faceUv = ((vec2(pos) + 0.5) / float(faceSize)) * 2.0 - 1.0;
+
+    for (int face = 0; face < 6; face++) {
+        vec3 dir = faceDirection(face, faceUv);
+        // Inverse mapping: cubemap direction → equirect direction.
+        vec3 equirectDir = normalize(vec3(
+            resolveAxis(dir, mapX),
+            resolveAxis(dir, mapY),
+            resolveAxis(dir, mapZ)));
+        vec2 uv = directionToEquirectUv(equirectDir);
+        vec4 pixel = textureLod(inputTex, uv, 0.0);
+        storeFacePixel(face, pos, pixel);
+    }
+}

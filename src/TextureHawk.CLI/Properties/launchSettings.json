@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TextureHawk.CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "convert --processor SpecularToMetalnessProcessor --input \"D:\\shits\\xmodels\\veh8_mil_lnd_whotel_body_c&veh8_mil_lnd_whotel_body_s~17958907895663050054.dds\" --specPath \"fdf\""
+    }
+  }
+}

@@ -1,0 +1,32 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D glossOutputImage;
+layout(set = 0, binding = 2) uniform writeonly image2D occlusionOutputImage;
+layout(set = 0, binding = 3) uniform writeonly image2D normalOutputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int srcWidth;
+    int srcHeight;
+};
+
+vec4 gray(float value) {
+    return vec4(value, value, value, 1.0);
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 pixel = texelFetch(inputTex, pos, 0);
+    vec2 normalVector = vec2(pixel.g * 2.0 - 1.0, pixel.a * 2.0 - 1.0);
+    vec2 xy = vec2(normalVector.x + normalVector.y, normalVector.x - normalVector.y) * 0.5;
+    vec3 xyz = normalize(vec3(xy, 1.0 - abs(xy.x) - abs(xy.y)));
+
+    imageStore(glossOutputImage, pos, gray(pixel.r));
+    imageStore(occlusionOutputImage, pos, gray(pixel.b));
+    imageStore(normalOutputImage, pos, vec4(xyz * 0.5 + 0.5, 1.0));
+}

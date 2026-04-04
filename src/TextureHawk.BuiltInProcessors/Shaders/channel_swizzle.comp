@@ -1,0 +1,41 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int srcWidth;
+    int srcHeight;
+    int redSource;   // 0=R,1=G,2=B,3=A,4=Zero,5=One
+    int greenSource;
+    int blueSource;
+    int alphaSource;
+};
+
+float resolveChannel(vec4 pixel, int source) {
+    if (source == 0) return pixel.r;
+    if (source == 1) return pixel.g;
+    if (source == 2) return pixel.b;
+    if (source == 3) return pixel.a;
+    if (source == 4) return 0.0;
+    return 1.0; // source == 5
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 pixel = texelFetch(inputTex, pos, 0);
+
+    vec4 result = vec4(
+        resolveChannel(pixel, redSource),
+        resolveChannel(pixel, greenSource),
+        resolveChannel(pixel, blueSource),
+        resolveChannel(pixel, alphaSource)
+    );
+
+    imageStore(outputImage, pos, result);
+}

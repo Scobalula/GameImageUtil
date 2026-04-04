@@ -1,0 +1,31 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D rgbTex;
+layout(set = 0, binding = 1) uniform sampler2D alphaTex;
+layout(set = 0, binding = 2) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int srcWidth;
+    int srcHeight;
+    int alphaSourceChannel; // 0=R,1=G,2=B,3=A,4=Luminance
+};
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 rgb   = texelFetch(rgbTex, pos, 0);
+    vec4 alpha = texelFetch(alphaTex, pos, 0);
+
+    float a;
+    if      (alphaSourceChannel == 1) a = alpha.g;
+    else if (alphaSourceChannel == 2) a = alpha.b;
+    else if (alphaSourceChannel == 3) a = alpha.a;
+    else if (alphaSourceChannel == 4) a = 0.299 * alpha.r + 0.587 * alpha.g + 0.114 * alpha.b;
+    else                              a = alpha.r;
+
+    imageStore(outputImage, pos, vec4(rgb.rgb, a));
+}

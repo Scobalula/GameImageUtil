@@ -1,0 +1,100 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TextureHawk.UI.ViewModels"
+        x:Class="TextureHawk.UI.Views.PluginManagerWindow"
+        x:DataType="vm:PluginManagerViewModel"
+        Title="Plugin Manager — TextureHawk"
+        Width="560" Height="420"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <!-- Scrollable content -->
+        <Border Classes="card-subtle-host" Margin="0,0,0,12">
+            <ScrollViewer Padding="0">
+                <StackPanel Margin="16" Spacing="16">
+                    <TextBlock Classes="sidebar-section" Text="LOADED PLUGINS" Margin="0,0,0,8" />
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Installed zip packages are extracted into this managed folder:"
+                                   Classes="dim" />
+                        <TextBlock Text="{Binding ManagedPluginsDirectory}"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource AccentBrush}" />
+                        <TextBlock Text="Warning: plugin packages are unverified and can execute code. Only install packages from sources you trust."
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource WarningBrush}"
+                                   Margin="0,6,0,0" />
+                    </StackPanel>
+                    <Panel MinHeight="200">
+                            <!-- Empty state -->
+                            <StackPanel IsVisible="{Binding !HasPlugins}"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Spacing="8"
+                                        Margin="16">
+                                <TextBlock Text="No plugins loaded"
+                                           FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{DynamicResource TextDim}" />
+                                <TextBlock Text="Install a plugin package zip to make it available"
+                                           Classes="dim"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+
+                            <!-- Plugin list -->
+                            <ItemsControl ItemsSource="{Binding Plugins}"
+                                          IsVisible="{Binding HasPlugins}"
+                                          Margin="0,4,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:PluginItemViewModel">
+                                        <Border Classes="texture-item" Margin="0,2">
+                                            <DockPanel>
+                                                <Button DockPanel.Dock="Right"
+                                                        Classes="cancel-btn"
+                                                        Content="Unload"
+                                                        FontSize="11"
+                                                        Padding="8,4"
+                                                        Tag="{Binding Id}"
+                                                        Click="OnUnloadPluginClick" />
+
+                                                <StackPanel Spacing="2">
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                        <TextBlock Text="{Binding Version}"
+                                                                   Classes="dim"
+                                                                   VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding Description}"
+                                                               Classes="dim"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Text="{Binding Author, StringFormat='By {0}'}"
+                                                               Classes="dim" />
+                                                    <TextBlock Text="{Binding ProcessorCount, StringFormat='Processors: {0}'}"
+                                                               Classes="dim" />
+                                                    <TextBlock Text="{Binding Directory}"
+                                                               Classes="dim"
+                                                               TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                    </Panel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Bottom action bar -->
+        <Border Grid.Row="1" Padding="16,10"
+                BorderBrush="{DynamicResource SidebarBorder}" BorderThickness="1"
+                CornerRadius="0"
+                Background="{DynamicResource CardBg}">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right" Spacing="8">
+                <Button Classes="accent" Content="Install Zip Package..." Click="OnLoadPluginClick" />
+                <Button Classes="cancel-btn" Content="Close" Click="OnCloseClick" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

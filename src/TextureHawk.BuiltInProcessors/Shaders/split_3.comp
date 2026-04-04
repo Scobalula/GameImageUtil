@@ -1,0 +1,28 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D output0Image;
+layout(set = 0, binding = 2) uniform writeonly image2D output1Image;
+layout(set = 0, binding = 3) uniform writeonly image2D output2Image;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int srcWidth;
+    int srcHeight;
+};
+
+vec4 gray(float value) {
+    return vec4(value, value, value, 1.0);
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 pixel = texelFetch(inputTex, pos, 0);
+    imageStore(output0Image, pos, gray(pixel.r));
+    imageStore(output1Image, pos, gray(pixel.g));
+    imageStore(output2Image, pos, gray(pixel.b));
+}

@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TextureHawk.UI.Views.LogViewerWindow"
+        Title="Log Viewer — TextureHawk"
+        Width="800" Height="500"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <Border Padding="12,8"
+                BorderBrush="{DynamicResource SidebarBorder}"
+                BorderThickness="1"
+                Background="{DynamicResource WindowBg}"
+                Margin="0,0,0,10">
+            <TextBlock x:Name="LogLocationText"
+                       Classes="dim"
+                       TextWrapping="Wrap" />
+        </Border>
+
+        <!-- Log content -->
+        <Border Grid.Row="1" Classes="card-subtle-host" Margin="0,0,0,12">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Classes="sidebar-section" Text="APPLICATION LOG"
+                           Margin="16,12,16,8" />
+                <Border Margin="12,0,12,12"
+                        Background="{DynamicResource TextBoxBg}"
+                        BorderBrush="{DynamicResource TextBoxBorder}"
+                        BorderThickness="1">
+                    <ScrollViewer x:Name="LogScroller"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto">
+                        <TextBox x:Name="LogText"
+                                 Classes="log-viewer-text"
+                                 IsReadOnly="True"
+                                 AcceptsReturn="True"
+                                 FontFamily="JetBrains Mono, Cascadia Mono, Consolas, monospace"
+                                 FontSize="12"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="16,12" />
+                    </ScrollViewer>
+                </Border>
+            </DockPanel>
+        </Border>
+
+        <!-- Bottom action bar -->
+        <Border Grid.Row="2" Padding="16,10"
+                BorderBrush="{DynamicResource SidebarBorder}" BorderThickness="1"
+                CornerRadius="0"
+                Background="{DynamicResource CardBg}">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right" Spacing="8">
+                <Button Classes="subtle" Content="Open Log Folder" Click="OnOpenLogFolderClick" />
+                <Button Classes="subtle" Content="Clear" Click="OnClearClick" />
+                <Button Classes="subtle" Content="Copy All" Click="OnCopyAllClick" />
+                <Button Classes="cancel-btn" Content="Close" Click="OnCloseClick" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console" Version="0.47.0" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TextureHawk\TextureHawk.csproj" />
+    <ProjectReference Include="..\TextureHawk.Gpu.Vulkan\TextureHawk.Gpu.Vulkan.csproj" />
+    <ProjectReference Include="..\TextureHawk.BuiltInProcessors\TextureHawk.BuiltInProcessors.csproj" />
+  </ItemGroup>
+
+</Project>

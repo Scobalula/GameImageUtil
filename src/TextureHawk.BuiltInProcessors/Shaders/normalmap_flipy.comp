@@ -1,0 +1,34 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int srcWidth;
+    int srcHeight;
+    int reconstructZ;
+};
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 pixel = texelFetch(inputTex, pos, 0);
+
+    // Convert to [-1,1] normal range
+    float nx =  pixel.r * 2.0 - 1.0;
+    float ny = -(pixel.g * 2.0 - 1.0); // flip Y
+
+    float nz;
+    if (reconstructZ != 0)
+        nz = sqrt(max(0.0, 1.0 - nx * nx - ny * ny));
+    else
+        nz = pixel.b * 2.0 - 1.0;
+
+    // Convert back to [0,1]
+    vec4 result = vec4(nx * 0.5 + 0.5, ny * 0.5 + 0.5, nz * 0.5 + 0.5, pixel.a);
+    imageStore(outputImage, pos, result);
+}

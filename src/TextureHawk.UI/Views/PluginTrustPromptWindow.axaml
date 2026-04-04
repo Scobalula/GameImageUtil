@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TextureHawk.UI.ViewModels"
+        x:Class="TextureHawk.UI.Views.PluginTrustPromptWindow"
+        x:DataType="vm:PluginTrustPromptViewModel"
+        Title="Trust Plugin Package"
+        Width="580"
+        Height="360"
+        MinWidth="520"
+        MinHeight="320"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <Border Classes="card-subtle-host" Margin="0,0,0,12">
+            <ScrollViewer Padding="0">
+                <StackPanel Margin="16" Spacing="12">
+                    <TextBlock Classes="sidebar-section" Text="SECURITY WARNING" />
+                    <TextBlock Text="This plugin package is unverified. Installing it allows custom code to run inside TextureHawk."
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource WarningBrush}" />
+                    <TextBlock Text="Only continue if you trust the package source and understand the risk."
+                               TextWrapping="Wrap" />
+                    <TextBlock Classes="setting-label" Text="Package" />
+                    <TextBlock Text="{Binding PackagePath}"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource AccentBrush}" />
+                    <CheckBox Content="I trust this unverified plugin package"
+                              IsChecked="{Binding IsTrusted}" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Row="1" Padding="16,10"
+                BorderBrush="{DynamicResource SidebarBorder}" BorderThickness="1"
+                CornerRadius="0"
+                Background="{DynamicResource CardBg}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button Classes="cancel-btn" Content="Cancel" Click="OnCancelClick" />
+                <Button Classes="accent"
+                        Content="Trust and Install"
+                        IsEnabled="{Binding CanInstall}"
+                        Click="OnTrustAndInstallClick" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

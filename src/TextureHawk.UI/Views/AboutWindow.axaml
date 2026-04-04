@@ -1,0 +1,80 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TextureHawk.UI.ViewModels"
+        x:Class="TextureHawk.UI.Views.AboutWindow"
+        x:DataType="vm:AboutViewModel"
+        Title="About — TextureHawk"
+        Icon="avares://TextureHawk.UI/Assets/Icon-Transparent.png"
+        Width="400"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <!-- Content -->
+        <Border Classes="card-subtle-host" Margin="0,0,0,12">
+            <ScrollViewer Padding="0">
+                <StackPanel Margin="16" Spacing="16">
+                    <TextBlock Classes="sidebar-section" Text="APPLICATION" Margin="0,0,0,8" />
+                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                        <Image Source="avares://TextureHawk.UI/Assets/Icon-Transparent.png"
+                               Width="64"
+                               Height="64"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+							   RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                        <TextBlock Text="{Binding AppName}"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{DynamicResource AccentBrush}" />
+                        <TextBlock Text="{Binding Version, StringFormat='Version {0}'}"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{DynamicResource TextDim}" />
+                        <TextBlock Text="{Binding Description}"
+                                   TextWrapping="Wrap"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   Foreground="{DynamicResource TextMuted}" />
+                    </StackPanel>
+
+                    <TextBlock Classes="sidebar-section" Text="UPDATES" Margin="0,8,0,8" />
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="{Binding UpdateStatus}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource AccentBrush}"
+                                   IsVisible="{Binding HasUpdateStatus}"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="Click 'Check for Updates' to see if a new version is available."
+                                   IsVisible="{Binding !HasUpdateStatus}"
+                                   Foreground="{DynamicResource TextMuted}"
+                                   FontSize="12"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding Copyright}"
+                               FontSize="11"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextMuted}"
+                               Margin="0,8,0,0" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Bottom action bar -->
+        <Border Grid.Row="1" Padding="16,10"
+                BorderBrush="{DynamicResource SidebarBorder}" BorderThickness="1"
+                CornerRadius="0"
+                Background="{DynamicResource CardBg}">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right" Spacing="8">
+                <Button Classes="accent"
+                        Content="Check for Updates"
+                        Click="OnCheckUpdateClick"
+                        IsEnabled="{Binding !IsCheckingForUpdate}" />
+                <Button Classes="cancel-btn" Content="Close" Click="OnCloseClick" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

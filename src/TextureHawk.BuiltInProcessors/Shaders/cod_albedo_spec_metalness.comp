@@ -1,0 +1,46 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D albedoTex;
+layout(set = 0, binding = 1) uniform sampler2D specTex;
+layout(set = 0, binding = 2) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int albedoWidth;
+    int albedoHeight;
+    int specWidth;
+    int specHeight;
+    float insulatorSpecRange;
+    float fp16MinValue;
+    int packMetalnessInAlpha;
+};
+
+float saturateFloat(float value) {
+    return clamp(value, 0.0, 1.0);
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight)
+        return;
+
+    vec2 uv = (vec2(pos) + 0.5) / vec2(outWidth, outHeight);
+    vec3 albedo = texelFetch(albedoTex, pos, 0).rgb;
+    vec3 specular = texture(specTex, uv).rgb;
+
+    float nonmetal = (albedo.r + albedo.g + albedo.b) * (1.0 / 3.0);
+    float metal = (specular.r + specular.g + specular.b) * (1.0 / 3.0);
+
+    nonmetal = saturateFloat(nonmetal + fp16MinValue);
+    float specE = saturateFloat(metal - insulatorSpecRange);
+    float specI = min(metal, insulatorSpecRange);
+    float metalness = specE / max(specE + nonmetal, 1e-8);
+    metalness = specI + (1.0 - insulatorSpecRange) * metalness;
+
+    vec4 outputValue = packMetalnessInAlpha != 0
+        ? vec4(albedo, metalness)
+        : vec4(metalness, metalness, metalness, 1.0);
+    imageStore(outputImage, pos, outputValue);
+}

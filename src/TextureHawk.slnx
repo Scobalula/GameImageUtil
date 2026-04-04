@@ -1,0 +1,17 @@
+<Solution>
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D.BlockCompression.Vulkan/RedFox.Graphics2D.BlockCompression.Vulkan.csproj" />
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D.BlockCompression/RedFox.Graphics2D.BlockCompression.csproj" />
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D.Bmp/RedFox.Graphics2D.Bmp.csproj" />
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D.Dds/RedFox.Graphics2D.Dds.csproj" />
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D.Jpeg/RedFox.Graphics2D.Jpeg.csproj" />
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D.Png/RedFox.Graphics2D.Png.csproj" />
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D.Tga/RedFox.Graphics2D.Tga.csproj" />
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D.Tiff/RedFox.Graphics2D.Tiff.csproj" />
+  <Project Path="../../RedFox/src/cs/RedFox.Graphics2D/RedFox.Graphics2D.csproj" />
+  <Project Path="TextureHawk.BuiltInProcessors\TextureHawk.BuiltInProcessors.csproj" />
+  <Project Path="TextureHawk.CLI\TextureHawk.CLI.csproj" />
+  <Project Path="TextureHawk.Gpu.Vulkan/TextureHawk.Gpu.Vulkan.csproj" />
+  <Project Path="TextureHawk.Tests\TextureHawk.Tests.csproj" />
+  <Project Path="TextureHawk.UI\TextureHawk.UI.csproj" />
+  <Project Path="TextureHawk\TextureHawk.csproj" />
+</Solution>

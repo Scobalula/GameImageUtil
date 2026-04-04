@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "texturehawk.example.redtint",
+  "name": "TextureHawk Example Package",
+  "version": "1.0.0",
+  "author": "TextureHawk",
+  "description": "Example definition package that adds a simple red tint shader processor.",
+  "processorsDirectory": "processors",
+  "shadersDirectory": "shaders"
+}

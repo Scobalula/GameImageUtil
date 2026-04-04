@@ -1,0 +1,62 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TextureHawk.UI.ViewModels"
+        x:Class="TextureHawk.UI.Views.BulkImportFolderWindow"
+        x:DataType="vm:BulkImportFolderViewModel"
+        Title="Bulk Import Folder"
+        Width="620"
+        Height="430"
+        MinWidth="560"
+        MinHeight="380"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <Border Classes="card-subtle-host" Margin="0,0,0,12">
+            <ScrollViewer Padding="0">
+                <StackPanel Margin="16" Spacing="12">
+                    <TextBlock Classes="sidebar-section" Text="BULK IMPORT" />
+                    <TextBlock Text="Dropped folder" Classes="setting-label" />
+                    <TextBlock Text="{Binding FolderPath}"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource AccentBrush}" />
+
+                    <Border BorderBrush="{DynamicResource SidebarBorder}" BorderThickness="1" Padding="12,10"
+                            Background="{DynamicResource WindowBg}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Options" Classes="setting-label" />
+                            <CheckBox Content="Include subfolders"
+                                      IsChecked="{Binding IncludeSubfolders}"
+                                      Click="OnOptionsChanged" />
+                            <CheckBox Content="Only supported image formats"
+                                      IsChecked="{Binding SupportedFormatsOnly}"
+                                      Click="OnOptionsChanged" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border BorderBrush="{DynamicResource TextBoxBorder}" BorderThickness="1"
+                            Background="{DynamicResource TextBoxBg}"
+                            Padding="12,10">
+                        <StackPanel Spacing="8">
+                            <ProgressBar IsIndeterminate="{Binding IsEnumerating}" Value="100" Maximum="100" />
+                            <TextBlock Text="{Binding StatusText}" />
+                            <TextBlock Text="{Binding CandidateCount, StringFormat='Files ready to import: {0}'}"
+                                       Foreground="{DynamicResource TextDim}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Row="1" Padding="16,10"
+                BorderBrush="{DynamicResource SidebarBorder}" BorderThickness="1"
+                CornerRadius="0"
+                Background="{DynamicResource CardBg}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button Classes="subtle" Content="Rescan" Click="OnRescanClick" IsEnabled="{Binding !IsEnumerating}" />
+                <Button Classes="cancel-btn" Content="Cancel" Click="OnCancelClick" />
+                <Button Classes="accent" Content="Import Files" Click="OnImportClick" IsEnabled="{Binding CanImport}" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

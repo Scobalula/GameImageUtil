@@ -1,0 +1,36 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int srcWidth;
+    int srcHeight;
+    int xSource;
+    int ySource;
+};
+
+float resolveChannel(vec4 pixel, int source) {
+    if (source == 0) return pixel.r;
+    if (source == 1) return pixel.g;
+    if (source == 2) return pixel.b;
+    return pixel.a;
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 pixel = texelFetch(inputTex, pos, 0);
+
+    float nx = resolveChannel(pixel, xSource) * 2.0 - 1.0;
+    float ny = resolveChannel(pixel, ySource) * 2.0 - 1.0;
+
+    float nz = sqrt(max(0.0, 1.0 - nx * nx - ny * ny));
+    vec4 result = vec4(nx * 0.5 + 0.5, ny * 0.5 + 0.5, nz * 0.5 + 0.5, 1.0);
+
+    imageStore(outputImage, pos, result);
+}

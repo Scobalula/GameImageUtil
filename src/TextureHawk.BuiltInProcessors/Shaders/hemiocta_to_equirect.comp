@@ -1,0 +1,93 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform sampler2D lowerHalfTex;
+layout(set = 0, binding = 2) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int upAxis;
+    int mapX;
+    int mapY;
+    int mapZ;
+    int hasLowerHalf;   // 0 = black out lower hemisphere, 1 = sample normally
+    int upperOnly;      // 1 = input is upper hemisphere only (not packed), 0 = packed layout
+    int hasSecondInput; // 1 = lowerHalfTex contains separate lower hemisphere data
+};
+
+const float PI = 3.14159265358979323846;
+
+float resolveAxis(vec3 dir, int axis) {
+    if (axis == 0) return dir.x;
+    if (axis == 1) return -dir.x;
+    if (axis == 2) return dir.y;
+    if (axis == 3) return -dir.y;
+    if (axis == 4) return dir.z;
+    return -dir.z;
+}
+
+// Returns hemiocta UV and whether the direction maps to the lower hemisphere.
+// When hasSecondInput == 1, both halves use full [0,1] UV range on separate textures.
+vec2 directionToHemiOctaUv(vec3 dir, out bool isLower) {
+    vec3 normalizedDir = dir / (abs(dir.x) + abs(dir.y) + abs(dir.z));
+    vec2 oct;
+
+    if (normalizedDir.y >= 0.0) {
+        isLower = false;
+        oct.x = normalizedDir.x - normalizedDir.z;
+        oct.y = normalizedDir.x + normalizedDir.z;
+        vec2 uv = vec2(oct.x * 0.5 + 0.5, oct.y * 0.5 + 0.5);
+        if (upperOnly != 0 || hasSecondInput != 0)
+            return uv;
+        return vec2(uv.x * 0.5, uv.y);
+    }
+
+    isLower = true;
+    oct.x = normalizedDir.z - normalizedDir.x;
+    oct.y = normalizedDir.z + normalizedDir.x;
+    vec2 uv = vec2(oct.x * 0.5 + 0.5, oct.y * 0.5 + 0.5);
+    if (hasSecondInput != 0)
+        return uv;
+    return vec2(0.5 + uv.x * 0.5, uv.y);
+}
+
+vec3 equirectUvToDirection(vec2 uv) {
+    float theta = uv.x * 2.0 * PI;
+    float phi = uv.y * PI;
+    float sinPhi = sin(phi);
+
+    if (upAxis == 0)
+        return normalize(vec3(cos(phi), sinPhi * sin(theta), sinPhi * cos(theta)));
+    if (upAxis == 1)
+        return normalize(vec3(sinPhi * sin(theta), cos(phi), sinPhi * cos(theta)));
+    return normalize(vec3(sinPhi * cos(theta), sinPhi * sin(theta), cos(phi)));
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight)
+        return;
+
+    vec2 uv = (vec2(pos) + 0.5) / vec2(outWidth, outHeight);
+    vec3 dir = equirectUvToDirection(uv);
+    // Inverse mapping: equirect direction → hemi-octa sample direction.
+    vec3 mapped = normalize(vec3(
+        resolveAxis(dir, mapX),
+        resolveAxis(dir, mapY),
+        resolveAxis(dir, mapZ)));
+    vec3 sampleDir = vec3(-mapped.x, -mapped.y, mapped.z);
+
+    bool isLower;
+    vec2 hemiUv = directionToHemiOctaUv(sampleDir, isLower);
+
+    vec4 pixel;
+    if (isLower && hasLowerHalf == 0)
+        pixel = vec4(0.0);
+    else if (isLower && hasSecondInput != 0)
+        pixel = textureLod(lowerHalfTex, hemiUv, 0.0);
+    else
+        pixel = textureLod(inputTex, hemiUv, 0.0);
+    imageStore(outputImage, pos, pixel);
+}

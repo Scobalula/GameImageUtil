@@ -1,0 +1,36 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TextureHawk.UI.Views.SplashWindow"
+        Title="TextureHawk"
+        Width="420"
+        Height="220"
+        CanResize="False"
+        ShowInTaskbar="False"
+        SystemDecorations="BorderOnly"
+        WindowStartupLocation="CenterScreen">
+    <Border Padding="22" Background="#16161A">
+        <Grid RowDefinitions="Auto,Auto,Auto,*">
+            <TextBlock Grid.Row="0"
+                       Text="TextureHawk"
+                       FontSize="26"
+                       FontWeight="SemiBold"
+                       Foreground="#F4F4F6" />
+            <TextBlock Grid.Row="1"
+                       Text="Initializing processors, translators, and GPU backend"
+                       FontSize="13"
+                                             Margin="0,10,0,0"
+                       Foreground="#B2B2B9"
+                       TextWrapping="Wrap" />
+            <ProgressBar Grid.Row="2"
+                         IsIndeterminate="True"
+                         Height="6"
+                                                 Margin="0,10,0,0" />
+            <TextBlock Grid.Row="3"
+                       Text="Please wait..."
+                       VerticalAlignment="Bottom"
+                       FontSize="11"
+                                             Margin="0,10,0,0"
+                       Foreground="#8A8A90" />
+        </Grid>
+    </Border>
+</Window>

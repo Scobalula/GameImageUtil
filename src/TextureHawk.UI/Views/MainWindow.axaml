@@ -1,0 +1,505 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TextureHawk.UI.ViewModels"
+        xmlns:conv="using:TextureHawk.UI.Converters"
+        x:Class="TextureHawk.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="TextureHawk"
+        Width="1200" Height="720"
+        MinWidth="1200" MinHeight="520"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <conv:StatusToColorConverter x:Key="StatusToColor" />
+        <DataTemplate x:Key="TextComboItemTemplate">
+            <Border Height="34" Padding="0" Background="Transparent">
+                <Grid ColumnDefinitions="16,*" VerticalAlignment="Center" Margin="10,0">
+                    <PathIcon Grid.Column="0"
+                              Data="{StaticResource IconSettings}"
+                              Width="12"
+                              Height="12"
+                              VerticalAlignment="Center"
+                              Foreground="{DynamicResource TextDim}" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding}"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="FormatComboItemTemplate">
+            <Border Height="34" Padding="0" Background="Transparent">
+                <Grid ColumnDefinitions="16,*" VerticalAlignment="Center" Margin="10,0">
+                    <PathIcon Grid.Column="0"
+                              Data="{StaticResource IconFile}"
+                              Width="12"
+                              Height="12"
+                              VerticalAlignment="Center"
+                              Foreground="{DynamicResource TextDim}" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding}"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="ImageFormatComboItemTemplate">
+            <Border Height="34" Padding="0" Background="Transparent">
+                <Grid ColumnDefinitions="16,*" VerticalAlignment="Center" Margin="10,0">
+                    <PathIcon Grid.Column="0"
+                              Data="{StaticResource IconImage}"
+                              Width="12"
+                              Height="12"
+                              VerticalAlignment="Center"
+                              Foreground="{DynamicResource TextDim}" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding}"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <DockPanel>
+        <!-- Status Bar -->
+        <Border DockPanel.Dock="Bottom" Classes="status-bar" Margin="8,0,8,8">
+            <Grid ColumnDefinitions="*,200">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusText}"
+                           Classes="status-text"
+                           TextTrimming="CharacterEllipsis"
+                           Margin="0,0,8,0" />
+                <ProgressBar Grid.Column="1"
+                             Value="{Binding Progress}"
+                             Maximum="100"
+                             IsVisible="{Binding IsProcessing}"
+                             VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid ColumnDefinitions="360,*" Margin="8">
+
+            <!-- Left Panel: Processor Settings -->
+            <Border Grid.Column="0" Classes="sidebar-host">
+                <ScrollViewer x:Name="SidebarScrollViewer"
+                              BringIntoViewOnFocusChange="False"
+                              Padding="0"
+                              Margin="1"
+                              HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Auto">
+                    <Grid HorizontalAlignment="Stretch" Margin="12,8">
+                        <!-- Empty state when no items loaded/selected -->
+                        <StackPanel IsVisible="{Binding !HasSelectedTextureItem}"
+                                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                                    Spacing="8" Margin="24">
+                            <PathIcon Data="{StaticResource IconImage}" Width="32" Height="32"
+                                      HorizontalAlignment="Center" Foreground="#505054" />
+                            <TextBlock Text="Select an image to edit settings"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextDim}"
+                                       FontSize="13" TextWrapping="Wrap"
+                                       TextAlignment="Center" />
+                        </StackPanel>
+
+                        <!-- Settings (visible when an item is selected) -->
+                        <StackPanel IsVisible="{Binding HasSelectedTextureItem}" Spacing="10" HorizontalAlignment="Stretch">
+                        <!-- Processor section -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Classes="sidebar-section" Text="PROCESSOR" Margin="0,0,0,2" />
+
+                            <ComboBox x:Name="ProcessorComboBox"
+                                      ItemsSource="{Binding GroupedProcessors}"
+                                      SelectedItem="{Binding SelectedGroupItem}"
+                                      MaxDropDownHeight="360"
+                                      HorizontalAlignment="Stretch">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:ProcessorGroupItem">
+                                        <Border Padding="0" MinHeight="34" Background="Transparent">
+                                            <Grid ColumnDefinitions="18,*" MinWidth="0" Margin="10,0">
+                                                <!-- Category header spans both columns -->
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding DisplayName}"
+                                                           IsVisible="{Binding IsHeader}"
+                                                           FontWeight="Bold" FontSize="10"
+                                                           Foreground="{DynamicResource AccentBrush}"
+                                                           Margin="12,0,0,0"
+                                                           VerticalAlignment="Center"
+                                                           TextWrapping="NoWrap"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <!-- Processor icon — Viewbox normalises emoji to a fixed pixel size -->
+                                                <Viewbox Grid.Column="0"
+                                                         Width="18" Height="18"
+                                                         Stretch="Uniform"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Center"
+                                                         IsVisible="{Binding !IsHeader}">
+                                                    <TextBlock Text="{Binding Icon}" FontSize="14" />
+                                                </Viewbox>
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding DisplayName}"
+                                                           IsVisible="{Binding !IsHeader}"
+                                                           Foreground="{DynamicResource WindowFg}"
+                                                           Margin="12,0,0,0"
+                                                           TextWrapping="NoWrap"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <TextBlock Classes="sidebar-desc"
+                                       Text="{Binding SelectedProcessor.Description}" Margin="0" />
+
+                            <CheckBox Content="Quick Convert (process on drop)"
+                                      IsChecked="{Binding QuickConvert}" />
+                        </StackPanel>
+
+                        <!-- Output section -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Classes="sidebar-section" Text="OUTPUT" Margin="0" />
+
+                            <TextBlock Classes="setting-label" Text="Format" />
+                            <ComboBox ItemsSource="{Binding OutputFormatOptions}"
+                                      SelectedItem="{Binding OutputFormat, Mode=TwoWay}"
+                                      ItemTemplate="{StaticResource FormatComboItemTemplate}"
+                                      HorizontalAlignment="Stretch" />
+
+                            <ItemsControl ItemsSource="{Binding CurrentOutputParameters}"
+                                          IsVisible="{Binding HasOutputParameters}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:ParameterItemViewModel">
+                                        <StackPanel Margin="0,4,0,6" Spacing="4" HorizontalAlignment="Stretch" ClipToBounds="True">
+                                            <TextBlock Text="{Binding Name}" Classes="setting-label" />
+                                            <TextBlock Text="{Binding Description}" Classes="setting-desc" />
+
+                                            <CheckBox IsChecked="{Binding BoolValue, Mode=TwoWay}"
+                                                      IsVisible="{Binding IsBoolean}"
+                                                      Content="{Binding Name}" />
+
+                                            <NumericUpDown Value="{Binding NumericValue, Mode=TwoWay}"
+                                                           Minimum="{Binding MinNumeric}"
+                                                           Maximum="{Binding MaxNumeric}"
+                                                           FormatString="0"
+                                                           IsVisible="{Binding IsInteger}"
+                                                           Classes="parameter-numeric"
+                                                           HorizontalAlignment="Stretch" />
+
+                                            <NumericUpDown Value="{Binding NumericValue, Mode=TwoWay}"
+                                                           Minimum="{Binding MinNumeric}"
+                                                           Maximum="{Binding MaxNumeric}"
+                                                           Increment="0.1"
+                                                           FormatString="0.00"
+                                                           IsVisible="{Binding IsFloat}"
+                                                           Classes="parameter-numeric"
+                                                           HorizontalAlignment="Stretch" />
+
+                                            <TextBox Text="{Binding StringValue, Mode=TwoWay}"
+                                                     IsVisible="{Binding IsString}"
+                                                     HorizontalAlignment="Stretch" />
+
+                                            <ComboBox ItemsSource="{Binding Options}"
+                                                      SelectedItem="{Binding StringValue, Mode=TwoWay}"
+                                                      IsVisible="{Binding IsChoice}"
+                                                      ItemTemplate="{StaticResource TextComboItemTemplate}"
+                                                      HorizontalAlignment="Stretch" />
+
+                                            <ComboBox ItemsSource="{Binding Options}"
+                                                      SelectedItem="{Binding StringValue, Mode=TwoWay}"
+                                                      IsVisible="{Binding IsImageFormat}"
+                                                      ItemTemplate="{StaticResource ImageFormatComboItemTemplate}"
+                                                      HorizontalAlignment="Stretch" />
+
+                                            <DockPanel IsVisible="{Binding IsFilePath}">
+                                                <Button DockPanel.Dock="Right" Classes="subtle"
+                                                        Content="..." Padding="10,8"
+                                                        Margin="4,0,0,0"
+                                                        Tag="{Binding}"
+                                                        Click="OnBrowseParameterFileClick" />
+                                                <TextBox Tag="{Binding}" Text="{Binding StringValue, Mode=TwoWay}" ScrollViewer.BringIntoViewOnFocusChange="False" DragDrop.AllowDrop="True" DragDrop.DragEnter="OnParameterDragEnter" DragDrop.DragOver="OnParameterDragOver" DragDrop.Drop="OnParameterDrop"/>
+                                            </DockPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Classes="setting-label" Text="Output Directory" />
+                            <TextBlock Classes="setting-desc" Text="Leave empty to use input directory" Margin="0" />
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" Classes="subtle" Content="..."
+                                        Click="OnBrowseOutputDirClick" Margin="4,0,0,0"
+                                        Padding="10,8" />
+                                <TextBox Text="{Binding OutputDirectory, Mode=TwoWay}"
+                                         Watermark="Same as input" />
+                            </DockPanel>
+
+                            <TextBlock Classes="setting-label" Text="Output Suffix" />
+                            <TextBox Text="{Binding OutputSuffix, Mode=TwoWay}"
+                                     Watermark="e.g. _converted" />
+
+                            <TextBlock Classes="setting-label" Text="GPU Color Space" />
+                            <TextBlock Classes="setting-desc" Text="GPU-backed processors honor this override when sampling SRGB-capable inputs." Margin="0" />
+                            <ComboBox ItemsSource="{Binding GpuColorSpaceOptions}"
+                                      SelectedItem="{Binding GpuColorSpace, Mode=TwoWay}"
+                                      ItemTemplate="{StaticResource TextComboItemTemplate}"
+                                      HorizontalAlignment="Stretch" />
+                        </StackPanel>
+
+                        <!-- Processor Parameters section -->
+                        <StackPanel Spacing="4"
+                                    IsVisible="{Binding HasParameters}">
+                            <TextBlock Classes="sidebar-section" Text="PARAMETERS" Margin="0,0,0,4" />
+
+                                <ItemsControl ItemsSource="{Binding CurrentParameters}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:ParameterItemViewModel">
+                                            <StackPanel Margin="0,4,0,6" Spacing="4" HorizontalAlignment="Stretch" ClipToBounds="True">
+                                                <TextBlock Text="{Binding Name}" Classes="setting-label" />
+                                                <TextBlock Text="{Binding Description}" Classes="setting-desc" />
+
+                                                <!-- Boolean → CheckBox -->
+                                                <CheckBox IsChecked="{Binding BoolValue, Mode=TwoWay}"
+                                                          IsVisible="{Binding IsBoolean}"
+                                                          Content="{Binding Name}" />
+
+                                                <!-- Integer → NumericUpDown -->
+                                                <NumericUpDown Value="{Binding NumericValue, Mode=TwoWay}"
+                                                               Minimum="{Binding MinNumeric}"
+                                                               Maximum="{Binding MaxNumeric}"
+                                                               FormatString="0"
+                                                               IsVisible="{Binding IsInteger}"
+                                                               Classes="parameter-numeric"
+                                                               HorizontalAlignment="Stretch" />
+
+                                                <!-- Float → NumericUpDown -->
+                                                <NumericUpDown Value="{Binding NumericValue, Mode=TwoWay}"
+                                                               Minimum="{Binding MinNumeric}"
+                                                               Maximum="{Binding MaxNumeric}"
+                                                               Increment="0.1"
+                                                               FormatString="0.00"
+                                                               IsVisible="{Binding IsFloat}"
+                                                               Classes="parameter-numeric"
+                                                               HorizontalAlignment="Stretch" />
+
+                                                <!-- String → TextBox -->
+                                                <TextBox Text="{Binding StringValue, Mode=TwoWay}"
+                                                         IsVisible="{Binding IsString}"
+                                                         HorizontalAlignment="Stretch" />
+
+                                                <!-- Choice → ComboBox -->
+                                                <ComboBox ItemsSource="{Binding Options}"
+                                                          SelectedItem="{Binding StringValue, Mode=TwoWay}"
+                                                          IsVisible="{Binding IsChoice}"
+                                                          ItemTemplate="{StaticResource TextComboItemTemplate}"
+                                                          HorizontalAlignment="Stretch" />
+
+                                                <!-- ImageFormat → ComboBox -->
+                                                <ComboBox ItemsSource="{Binding Options}"
+                                                          SelectedItem="{Binding StringValue, Mode=TwoWay}"
+                                                          IsVisible="{Binding IsImageFormat}"
+                                                          ItemTemplate="{StaticResource ImageFormatComboItemTemplate}"
+                                                          HorizontalAlignment="Stretch" />
+
+                                                <!-- FilePath → TextBox + Browse -->
+                                                <DockPanel IsVisible="{Binding IsFilePath}">
+                                                    <Button DockPanel.Dock="Right" Classes="subtle"
+                                                            Content="..." Padding="10,8"
+                                                            Margin="4,0,0,0"
+                                                            Tag="{Binding}"
+                                                            Click="OnBrowseParameterFileClick" />
+                                                    <TextBox Tag="{Binding}" Text="{Binding StringValue, Mode=TwoWay}" ScrollViewer.BringIntoViewOnFocusChange="False" DragDrop.AllowDrop="True" DragDrop.DragEnter="OnParameterDragEnter" DragDrop.DragOver="OnParameterDragOver" DragDrop.Drop="OnParameterDrop"/>
+                                                </DockPanel>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Right Panel: Texture Queue -->
+            <DockPanel Grid.Column="1" Margin="8,0,0,0">
+                <!-- Action buttons -->
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="4" Margin="8,0,0,0">
+                        <Button Classes="toolbar-btn" Click="OnSettingsClick" ToolTip.Tip="Settings">
+                            <PathIcon Data="{StaticResource IconSettings}" Width="14" Height="14" Foreground="#A0A0A6" />
+                        </Button>
+                        <Button Classes="toolbar-btn" Click="OnShowLogClick" ToolTip.Tip="Log">
+                            <PathIcon Data="{StaticResource IconLog}" Width="14" Height="14" Foreground="#E91E63" />
+                        </Button>
+                        <Button Classes="toolbar-btn" Click="OnAboutClick" ToolTip.Tip="About">
+                            <PathIcon Data="{StaticResource IconAbout}" Width="14" Height="14" Foreground="#F06292" />
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Classes="accent" Click="OnProcessAllClick" IsEnabled="{Binding !IsProcessing}" Height="40" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="{StaticResource IconPlayColored}" Width="14" Height="14" />
+                                <TextBlock Text="Process All" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Classes="subtle" Click="OnProcessSelectedClick" IsEnabled="{Binding !IsProcessing}" Height="40" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="{StaticResource IconPlayColored}" Width="14" Height="14" />
+                                <TextBlock Text="Process Selected" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Classes="subtle" Click="OnAddFilesClick" Height="40" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="{StaticResource IconPlusColored}" Width="14" Height="14" />
+                                <TextBlock Text="Add Files" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Classes="subtle" Click="OnClearAllClick" Height="40" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="{StaticResource IconTrashColored}" Width="14" Height="14" />
+                                <TextBlock Text="Clear All" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Classes="cancel-btn" Click="OnCancelClick" IsVisible="{Binding IsProcessing}" Height="40" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="{StaticResource IconCancelColored}" Width="14" Height="14" />
+                                <TextBlock Text="Cancel" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+
+                <!-- Drop Zone / Texture List -->
+                <Border x:Name="QueueDropSurface" Classes="card-host" DragDrop.AllowDrop="True">
+                    <Grid>
+                        <!-- Drop overlay -->
+                        <Border IsVisible="{Binding ShowDropOverlay}"
+                                Background="#30E91E63"
+                                CornerRadius="0"
+                                IsHitTestVisible="False"
+                                ZIndex="10">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False">
+                                <PathIcon Data="{StaticResource IconArrowDown}" Width="36" Height="36"
+                                          HorizontalAlignment="Center"
+                                          Foreground="{DynamicResource AccentBrush}" />
+                                <TextBlock Text="Drop files here"
+                                           FontSize="16"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{DynamicResource AccentBrush}" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Empty state -->
+                        <Border x:Name="DropZone"
+                            Classes="dropzone"
+                            DragDrop.AllowDrop="True"
+                                IsVisible="{Binding ShowEmptyDropZone}"
+                                Margin="16"
+                                Cursor="Hand"
+                                PointerPressed="OnDropzoneClick">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8" IsHitTestVisible="False">
+                                <PathIcon Data="{StaticResource IconImage}" Width="36" Height="36"
+                                          HorizontalAlignment="Center" Foreground="#505054" />
+                                <TextBlock Text="Drop files here or click to add"
+                                           HorizontalAlignment="Center"
+                                           Foreground="#78787E" />
+                                <TextBlock Text="Supports all registered image formats"
+                                           HorizontalAlignment="Center"
+                                           Classes="dim" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Texture list -->
+                        <ListBox x:Name="TextureListBox"
+                                 ItemsSource="{Binding TextureItems}"
+                                 SelectionMode="Multiple"
+                                 SelectionChanged="OnTextureListSelectionChanged"
+                                 DoubleTapped="OnTextureListDoubleTapped"
+                                 IsVisible="{Binding HasItems}"
+                                 ScrollViewer.AllowAutoHide="False"
+                                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="vm:TextureItemViewModel">
+                                    <Border Classes="texture-item">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <DockPanel Grid.Column="0" LastChildFill="True" MinWidth="0">
+                                                <Button DockPanel.Dock="Right"
+                                                    Classes="item-remove-btn"
+                                                    Padding="6,2"
+                                                    Click="OnRemoveItemClick"
+                                                    Tag="{Binding}">
+                                                    <PathIcon Data="{StaticResource IconClose}"
+                                                              Width="10" Height="10"
+                                                              Foreground="#78787E" />
+                                                </Button>
+
+                                                <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center" MinWidth="0">
+                                                    <PathIcon Grid.Column="0"
+                                                              Data="{StaticResource IconFile}"
+                                                              Width="16" Height="16"
+                                                              Foreground="{DynamicResource AccentBrush}" />
+
+                                                    <StackPanel Grid.Column="1" Spacing="1" MinWidth="0" HorizontalAlignment="Stretch" Margin="8,0,0,0">
+                                                        <Grid ColumnDefinitions="*,Auto,Auto" MinWidth="0">
+                                                            <TextBlock Grid.Column="0"
+                                                                       Text="{Binding FileName}"
+                                                                       FontWeight="Medium"
+                                                                       Foreground="{DynamicResource TextPrimary}"
+                                                                       TextWrapping="NoWrap"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       MinWidth="0"
+                                                                       MaxLines="1" />
+                                                            <Border Grid.Column="1" Background="#2A2A30" CornerRadius="0" Padding="5,1" Margin="8,0,0,0">
+                                                                <TextBlock Text="{Binding FileExtension}"
+                                                                           FontSize="10"
+                                                                           Foreground="{DynamicResource TextDim}"
+                                                                           VerticalAlignment="Center" />
+                                                            </Border>
+                                                            <TextBlock Grid.Column="2"
+                                                                       IsVisible="{Binding HasProcessorOverride}"
+                                                                       FontSize="11"
+                                                                       Foreground="{DynamicResource TextDim}"
+                                                                       VerticalAlignment="Center"
+                                                                       TextWrapping="NoWrap"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       Margin="8,0,0,0"
+                                                                       MaxWidth="180">
+                                                                <TextBlock.Text>
+                                                                    <MultiBinding StringFormat="· {0}">
+                                                                        <Binding Path="ProcessorDisplayName" />
+                                                                    </MultiBinding>
+                                                                </TextBlock.Text>
+                                                            </TextBlock>
+                                                        </Grid>
+                                                        <TextBlock Text="{Binding Status}"
+                                                                   FontSize="11"
+                                                                   Foreground="{Binding Status, Converter={StaticResource StatusToColor}}"
+                                                                   TextWrapping="NoWrap"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DockPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>

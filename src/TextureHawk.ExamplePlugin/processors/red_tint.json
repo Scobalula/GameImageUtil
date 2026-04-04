@@ -1,0 +1,38 @@
+{
+  "id": "plugin.example.red-tint",
+  "name": "Red Tint",
+  "description": "Applies a configurable red tint using a package shader.",
+  "category": "Custom",
+  "shader": "red_tint.comp",
+  "outputWidthParameter": "width",
+  "outputHeightParameter": "height",
+  "parameters": [
+    {
+      "id": "width",
+      "name": "Width",
+      "description": "Optional output width. Use 0 to keep the source width.",
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 16384
+    },
+    {
+      "id": "height",
+      "name": "Height",
+      "description": "Optional output height. Use 0 to keep the source height.",
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 16384
+    },
+    {
+      "id": "redBoost",
+      "name": "Red Boost",
+      "description": "Multiplier applied to the source red channel.",
+      "type": "float",
+      "default": 1.35,
+      "min": 0.0,
+      "max": 4.0
+    }
+  ]
+}

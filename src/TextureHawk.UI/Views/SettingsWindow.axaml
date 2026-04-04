@@ -1,0 +1,214 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TextureHawk.UI.ViewModels"
+        x:Class="TextureHawk.UI.Views.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Title="Settings — TextureHawk"
+        Width="700" Height="680"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Window.Resources>
+        <DataTemplate x:Key="TextComboItemTemplate">
+            <Border Height="36" Padding="12,0" Background="Transparent">
+                <TextBlock Text="{Binding}"
+                           VerticalAlignment="Center"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis" />
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FormatComboItemTemplate">
+            <Border Height="36" Padding="12,0" Background="Transparent">
+                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="🗂" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding}"
+                               VerticalAlignment="Center"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GpuComboItemTemplate">
+            <Border Height="36" Padding="12,0" Background="Transparent">
+                <TextBlock Text="{Binding Name}"
+                           VerticalAlignment="Center"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis" />
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <!-- Scrollable settings content -->
+        <Border Classes="card-subtle-host" Margin="0,0,0,12">
+            <ScrollViewer Padding="0">
+                <StackPanel Spacing="16" Margin="16">
+                        <!-- OUTPUT -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="sidebar-section" Text="OUTPUT" Margin="0,0,0,8" />
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="setting-label" Text="Default Output Format" />
+                                <ComboBox ItemsSource="{Binding OutputFormatOptions}"
+                                          SelectedItem="{Binding DefaultOutputFormat}"
+                                          IsEnabled="{Binding !UseProcessorDefaultOutputFormat}"
+                                          ItemTemplate="{StaticResource FormatComboItemTemplate}"
+                                          HorizontalAlignment="Stretch" />
+                                <CheckBox Content="Use processor-specific default output format for new images"
+                                          IsChecked="{Binding UseProcessorDefaultOutputFormat}" />
+
+                                <TextBlock Classes="setting-label" Text="Default Output Directory" />
+                                <TextBox Text="{Binding OutputDirectory}"
+                                         IsEnabled="{Binding !UseProcessorDefaultOutputDirectory}"
+                                         Watermark="Same as input file" />
+                                <CheckBox Content="Use processor-specific output directory for new images"
+                                          IsChecked="{Binding UseProcessorDefaultOutputDirectory}" />
+
+                                <TextBlock Classes="setting-label" Text="Output Suffix" />
+                                <TextBox Text="{Binding OutputSuffix}"
+                                         IsEnabled="{Binding !UseProcessorDefaultOutputSuffix}"
+                                         Watermark="No suffix" />
+                                <CheckBox Content="Use processor-specific output suffix for new images"
+                                          IsChecked="{Binding UseProcessorDefaultOutputSuffix}" />
+
+                                <TextBlock Classes="setting-label" Text="Default GPU Color Space" />
+                                <ComboBox ItemsSource="{Binding GpuColorSpaceOptions}"
+                                          SelectedItem="{Binding DefaultGpuColorSpaceMode}"
+                                          IsEnabled="{Binding !UseProcessorDefaultGpuColorSpaceMode}"
+                                          ItemTemplate="{StaticResource TextComboItemTemplate}"
+                                          HorizontalAlignment="Stretch" />
+                                <CheckBox Content="Use processor-specific GPU color space for new images"
+                                          IsChecked="{Binding UseProcessorDefaultGpuColorSpaceMode}" />
+
+                                <CheckBox Content="Overwrite existing files without prompting"
+                                          IsChecked="{Binding OverwriteExisting}" Margin="0,4" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- UPDATES -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="sidebar-section" Text="UPDATES" Margin="0,0,0,8" />
+                            <StackPanel Spacing="6">
+                                <CheckBox Content="Check for updates on startup"
+                                          IsChecked="{Binding CheckForUpdates}" />
+                                <CheckBox Content="Include pre-release versions"
+                                          IsChecked="{Binding IncludePreReleases}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- PERFORMANCE -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="sidebar-section" Text="PERFORMANCE" Margin="0,0,0,8" />
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="setting-label" Text="GPU Device" />
+                                <ComboBox ItemsSource="{Binding AvailableGpus}"
+                                          SelectedItem="{Binding SelectedGpu}"
+                                          ItemTemplate="{StaticResource GpuComboItemTemplate}"
+                                          HorizontalAlignment="Stretch">
+                                </ComboBox>
+
+                                <TextBlock Classes="setting-label" Text="Max Parallel Jobs" />
+                                <NumericUpDown Value="{Binding MaxParallelJobs}"
+                                               Minimum="1" Maximum="16"
+                                               Classes="parameter-numeric"
+                                               HorizontalAlignment="Stretch" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- APPEARANCE -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="sidebar-section" Text="APPEARANCE" Margin="0,0,0,8" />
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="setting-label" Text="Theme" />
+                                <ComboBox ItemsSource="{Binding ThemeOptions}"
+                                          SelectedItem="{Binding Theme}"
+                                          ItemTemplate="{StaticResource TextComboItemTemplate}"
+                                          HorizontalAlignment="Stretch" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- PLUGINS --><!--
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="sidebar-section" Text="PLUGINS" Margin="0,0,0,8" />
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="Installed zip packages are extracted into this managed folder:"
+                                           Classes="dim" />
+                                <TextBlock Text="{Binding ManagedPluginsDirectory}"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource AccentBrush}" />
+                                <TextBlock Text="Warning: plugin packages are unverified and can execute code. Only install packages from sources you trust."
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource WarningBrush}" />
+
+                                <Panel MinHeight="160">
+                                    <StackPanel IsVisible="{Binding !HasPlugins}"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Spacing="8"
+                                                Margin="16">
+                                        <TextBlock Text="No plugins loaded"
+                                                   FontSize="14"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{DynamicResource TextDim}" />
+                                    </StackPanel>
+
+                                    <ItemsControl ItemsSource="{Binding Plugins}"
+                                                  IsVisible="{Binding HasPlugins}"
+                                                  Margin="0,4,0,0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:PluginItemViewModel">
+                                                <Border Classes="texture-item" Margin="0,2">
+                                                    <DockPanel>
+                                                        <Button DockPanel.Dock="Right"
+                                                                Classes="cancel-btn"
+                                                                Content="Unload"
+                                                                FontSize="11"
+                                                                Padding="8,4"
+                                                                Tag="{Binding Id}"
+                                                                Click="OnUnloadPluginClick" />
+
+                                                        <StackPanel Spacing="2">
+                                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                                <TextBlock Text="{Binding Version}"
+                                                                           Classes="dim"
+                                                                           VerticalAlignment="Center" />
+                                                            </StackPanel>
+                                                            <TextBlock Text="{Binding Description}"
+                                                                       Classes="dim"
+                                                                       TextWrapping="Wrap" />
+                                                            <TextBlock Text="{Binding Author, StringFormat='By {0}'}"
+                                                                       Classes="dim" />
+                                                            <TextBlock Text="{Binding ProcessorCount, StringFormat='Processors: {0}'}"
+                                                                       Classes="dim" />
+                                                        </StackPanel>
+                                                    </DockPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Panel>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                                    <Button Classes="accent" Content="Install Zip Package..." Click="OnLoadPluginClick" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>-->
+                    </StackPanel>
+                </ScrollViewer>
+        </Border>
+
+        <!-- Bottom action bar -->
+        <Border Grid.Row="1" Padding="16,10"
+                BorderBrush="{DynamicResource SidebarBorder}" BorderThickness="1"
+                CornerRadius="0"
+                Background="{DynamicResource CardBg}">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right" Spacing="8">
+                <Button Classes="cancel-btn" Content="Cancel" Click="OnCancelClick" />
+                <Button Classes="accent" Content="Save" Click="OnSaveClick" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

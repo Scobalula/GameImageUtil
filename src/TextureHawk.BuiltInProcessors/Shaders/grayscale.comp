@@ -1,0 +1,22 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+};
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 pixel = texelFetch(inputTex, pos, 0);
+
+    // Rec.709 luminance weights
+    float luma = dot(pixel.rgb, vec3(0.2126, 0.7152, 0.0722));
+
+    imageStore(outputImage, pos, vec4(luma, luma, luma, pixel.a));
+}

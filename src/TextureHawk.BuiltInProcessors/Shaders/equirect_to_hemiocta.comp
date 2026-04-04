@@ -1,0 +1,76 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int upAxis;
+    int mapX;
+    int mapY;
+    int mapZ;
+};
+
+const float PI = 3.14159265358979323846;
+
+float resolveAxis(vec3 dir, int axis) {
+    if (axis == 0) return dir.x;
+    if (axis == 1) return -dir.x;
+    if (axis == 2) return dir.y;
+    if (axis == 3) return -dir.y;
+    if (axis == 4) return dir.z;
+    return -dir.z;
+}
+
+vec3 decodeHemiOcta(vec2 packedUv, out bool upperHemisphere) {
+    upperHemisphere = packedUv.x < 0.5;
+    vec2 localUv = packedUv;
+    localUv.x = upperHemisphere ? localUv.x * 2.0 : (localUv.x - 0.5) * 2.0;
+    vec2 oct = localUv * 2.0 - 1.0;
+
+    float x = 0.5 * (oct.x + oct.y);
+    float z = 0.5 * (oct.y - oct.x);
+    float y = 1.0 - abs(x) - abs(z);
+    if (!upperHemisphere)
+        y = -y;
+
+    return normalize(vec3(x, y, z));
+}
+
+vec2 directionToEquirectUv(vec3 dir) {
+    float theta;
+    float phi;
+
+    if (upAxis == 0) {
+        theta = atan(dir.y, dir.z);
+        phi = acos(clamp(dir.x, -1.0, 1.0));
+    }
+    else if (upAxis == 1) {
+        theta = atan(dir.x, dir.z);
+        phi = acos(clamp(dir.y, -1.0, 1.0));
+    }
+    else {
+        theta = atan(dir.y, dir.x);
+        phi = acos(clamp(dir.z, -1.0, 1.0));
+    }
+
+    if (theta < 0.0)
+        theta += 2.0 * PI;
+    return vec2(theta / (2.0 * PI), phi / PI);
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight)
+        return;
+
+    vec2 packedUv = (vec2(pos) + 0.5) / vec2(outWidth, outHeight);
+    bool upperHemisphere;
+    vec3 hemiDir = decodeHemiOcta(packedUv, upperHemisphere);
+    vec3 dir = normalize(vec3(resolveAxis(vec3(-hemiDir.x, -hemiDir.y, hemiDir.z), mapX), resolveAxis(vec3(-hemiDir.x, -hemiDir.y, hemiDir.z), mapY), resolveAxis(vec3(-hemiDir.x, -hemiDir.y, hemiDir.z), mapZ)));
+    vec2 uv = directionToEquirectUv(dir);
+    vec4 pixel = textureLod(inputTex, uv, 0.0);
+    imageStore(outputImage, pos, pixel);
+}

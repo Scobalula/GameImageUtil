@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TextureHawk.UI.ViewModels"
+        x:Class="TextureHawk.UI.Views.UpdateNotificationWindow"
+        x:DataType="vm:UpdateNotificationViewModel"
+        Title="Update Available"
+        Width="520"
+        Height="420"
+        MinWidth="420"
+        MinHeight="320"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True">
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <Border Classes="card-subtle-host" Margin="0,0,0,12">
+            <ScrollViewer Padding="0">
+                <StackPanel Margin="16" Spacing="12">
+                    <TextBlock Text="{Binding Title}"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource AccentBrush}" />
+                    <TextBlock Text="{Binding PublishedText}"
+                               Foreground="{DynamicResource TextDim}"
+                               IsVisible="{Binding HasPublishedText}" />
+                    <TextBlock Text="{Binding ReleaseNotes}"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource WindowFg}" />
+                    <TextBlock Text="{Binding Update.Url}"
+                               Foreground="{DynamicResource AccentBrush}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Text="This version is currently skipped for startup notifications."
+                               Classes="dim"
+                               IsVisible="{Binding IsSkippedBySettings}" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Row="1" Padding="16,10"
+                BorderBrush="{DynamicResource SidebarBorder}" BorderThickness="1"
+                CornerRadius="0"
+                Background="{DynamicResource CardBg}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button Classes="subtle" Content="Skip This Version" Click="OnSkipVersionClick" />
+                <Button Classes="accent" Content="Open Release" Click="OnOpenReleaseClick" />
+                <Button Classes="cancel-btn" Content="Later" Click="OnCloseClick" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

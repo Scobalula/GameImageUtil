@@ -1,0 +1,48 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform sampler2D maskTex;
+layout(set = 0, binding = 2) uniform writeonly image2D colorOutputImage;
+layout(set = 0, binding = 3) uniform writeonly image2D specOutputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int srcWidth;
+    int srcHeight;
+    int maskWidth;
+    int maskHeight;
+    int useSeparateMask;
+};
+
+const float insulatorSpecRange = 0.1;
+
+vec4 sampleMask(ivec2 pos) {
+    if (useSeparateMask == 0)
+        return texelFetch(inputTex, pos, 0).aaaa;
+
+    vec2 uv = (vec2(pos) + 0.5) / vec2(outWidth, outHeight);
+    return texture(maskTex, uv);
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 pixel = texelFetch(inputTex, pos, 0);
+    vec4 maskPixel = sampleMask(pos);
+
+    vec3 albedo = pixel.rgb;
+
+    float metallic = clamp((maskPixel.r - insulatorSpecRange) / (1.0 - insulatorSpecRange), 0.0, 1.0);
+    float diffuseWeight = 1.0 - metallic;
+    float reflectance = min(maskPixel.a, insulatorSpecRange);
+
+    vec4 colorOutput = vec4(albedo * diffuseWeight, useSeparateMask != 0 ? pixel.a : 1.0);
+    vec3 specRgb = max(vec3(reflectance) + metallic * albedo, vec3(0.21));
+    vec4 specOutput = vec4(specRgb, 1.0);
+
+    imageStore(colorOutputImage, pos, colorOutput);
+    imageStore(specOutputImage, pos, specOutput);
+}

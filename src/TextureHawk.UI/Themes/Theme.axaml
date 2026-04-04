@@ -1,0 +1,582 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TextureHawk Theme — Color resources in App.axaml ThemeDictionaries
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <Style Selector="Window">
+        <Setter Property="Background" Value="{DynamicResource WindowBg}" />
+        <Setter Property="Foreground" Value="{DynamicResource WindowFg}" />
+        <Setter Property="FontFamily" Value="JetBrains Mono, Cascadia Mono, Consolas, monospace" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Force square corners across templated chrome as well. -->
+    <Style Selector="Border">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="PopupRoot Border">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <!-- ── Card panels ── -->
+    <Style Selector="Border.card">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+        <Setter Property="Background" Value="{DynamicResource CardBg}" />
+        <Setter Property="BoxShadow" Value="0 1 4 0 #18000000" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+
+    <Style Selector="Border.card-host">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+        <Setter Property="Background" Value="{DynamicResource CardBg}" />
+        <Setter Property="BoxShadow" Value="0 1 4 0 #18000000" />
+        <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+
+    <Style Selector="Border.card-subtle">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardSubtleBorder}" />
+        <Setter Property="Background" Value="{DynamicResource CardSubtleBg}" />
+        <Setter Property="BoxShadow" Value="0 1 4 0 #18000000" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+
+    <Style Selector="Border.card-subtle-host">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardSubtleBorder}" />
+        <Setter Property="Background" Value="{DynamicResource CardSubtleBg}" />
+        <Setter Property="BoxShadow" Value="0 1 4 0 #18000000" />
+        <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+
+    <!-- legacy alias -->
+    <Style Selector="Border.panel">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+        <Setter Property="Background" Value="{DynamicResource CardBg}" />
+        <Setter Property="BoxShadow" Value="0 1 4 0 #18000000" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+
+    <!-- ── Sidebar ── -->
+    <Style Selector="Border.sidebar">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BoxShadow" Value="0 1 4 0 #18000000" />
+        <Setter Property="Background" Value="{DynamicResource SidebarBg}" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+
+    <Style Selector="Border.sidebar-host">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BoxShadow" Value="0 1 4 0 #18000000" />
+        <Setter Property="Background" Value="{DynamicResource SidebarBg}" />
+        <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+
+    <!-- ── Status bar ── -->
+    <Style Selector="Border.status-bar">
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StatusBarBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BoxShadow" Value="0 1 4 0 #18000000" />
+        <Setter Property="Background" Value="{DynamicResource StatusBarBg}" />
+    </Style>
+
+    <Style Selector="TextBlock.status-text">
+        <Setter Property="Foreground" Value="{DynamicResource TextDim}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- ── Section headers ── -->
+    <Style Selector="TextBlock.section-header">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+
+    <Style Selector="TextBlock.sidebar-title">
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="0,0,0,4" />
+    </Style>
+
+    <Style Selector="TextBlock.sidebar-desc">
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="0,0,0,16" />
+    </Style>
+
+    <Style Selector="TextBlock.sidebar-section">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="0,12,0,6" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <!-- ── Dim label text ── -->
+    <Style Selector="TextBlock.dim">
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="FontSize" Value="11" />
+    </Style>
+
+    <Style Selector="TextBlock.setting-label">
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="TextBlock.setting-desc">
+        <Setter Property="Foreground" Value="{DynamicResource TextDisabled}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="0,2,0,8" />
+    </Style>
+
+    <!-- ── Accent button ── -->
+    <Style Selector="Button.accent">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="14,10" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="#00000000" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="Background" Value="{DynamicResource AccentGradient}" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.accent:pointerover /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="Background" Value="{DynamicResource AccentHoverGradient}" />
+    </Style>
+    <Style Selector="Button.accent:pressed /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
+        <Setter Property="RenderTransform" Value="scale(0.98)" />
+    </Style>
+    <Style Selector="Button.accent:disabled">
+        <Setter Property="Opacity" Value="0.35" />
+    </Style>
+
+    <!-- ── Subtle / sidebar button ── -->
+    <Style Selector="Button.subtle">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="14,10" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SubtleBtnBorder}" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="{DynamicResource SubtleBtnFg}" />
+        <Setter Property="Background" Value="{DynamicResource SubtleBtnBg}" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.subtle:pointerover /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource SubtleBtnHoverFg}" />
+        <Setter Property="Background" Value="{DynamicResource SubtleBtnHoverBg}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SubtleBtnHoverBorder}" />
+    </Style>
+    <Style Selector="Button.subtle:pressed /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource SubtleBtnHoverFg}" />
+        <Setter Property="Background" Value="{DynamicResource SubtleBtnPressedBg}" />
+    </Style>
+    <Style Selector="Button.subtle:disabled">
+        <Setter Property="Opacity" Value="0.35" />
+    </Style>
+
+    <!-- ── Cancel button ── -->
+    <Style Selector="Button.cancel-btn">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="14,10" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CancelBtnBorder}" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="{DynamicResource CancelBtnFg}" />
+        <Setter Property="Background" Value="{DynamicResource CancelBtnBg}" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.cancel-btn:pointerover /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource SubtleBtnHoverFg}" />
+        <Setter Property="Background" Value="{DynamicResource CancelBtnHoverBg}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CancelBtnHoverBorder}" />
+    </Style>
+
+    <!-- ── Drop zone ── -->
+    <Style Selector="Border.dropzone">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource DropzoneBorder}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="24" />
+        <Setter Property="MinHeight" Value="120" />
+    </Style>
+    <Style Selector="Border.dropzone:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Background" Value="#10FFFFFF" />
+    </Style>
+
+    <!-- ── Texture item in list ── -->
+    <Style Selector="Border.texture-item">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="Margin" Value="0,0,0,6" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextureItemBorder}" />
+        <Setter Property="Background" Value="{DynamicResource TextureItemBg}" />
+        <Setter Property="MinHeight" Value="70" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Border.texture-item:pointerover">
+        <Setter Property="Background" Value="{DynamicResource TextureItemHoverBg}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextureItemHoverBorder}" />
+    </Style>
+    <Style Selector="ListBoxItem:selected Border.texture-item">
+        <Setter Property="Background" Value="{DynamicResource TextureItemSelectedBg}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+    </Style>
+    <Style Selector="ListBoxItem:selected:pointerover Border.texture-item">
+        <Setter Property="Background" Value="{DynamicResource TextureItemSelectedBg}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <Style Selector="Button.item-remove-btn">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="6,2" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.item-remove-btn:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#14FFFFFF" />
+    </Style>
+    <Style Selector="Button.item-remove-btn:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#20FFFFFF" />
+    </Style>
+
+    <!-- ── Status indicators ── -->
+    <Style Selector="TextBlock.status-success">
+        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+    </Style>
+    <Style Selector="TextBlock.status-error">
+        <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+    </Style>
+    <Style Selector="TextBlock.status-pending">
+        <Setter Property="Foreground" Value="{DynamicResource TextDim}" />
+    </Style>
+
+    <!-- ── TextBox ── -->
+    <Style Selector="TextBox">
+        <Setter Property="Foreground" Value="{DynamicResource WindowFg}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Background" Value="{DynamicResource TextBoxBg}" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="TextBox:focus">
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <Style Selector="TextBox.log-viewer-text">
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="Padding" Value="16,12" />
+    </Style>
+
+    <!-- ── ComboBox ── -->
+    <Style Selector="ComboBox">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="Foreground" Value="{DynamicResource WindowFg}" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="ComboBox /template/ ContentPresenter">
+        <Setter Property="Margin" Value="0,0,28,0" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="ComboBox /template/ Border">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="ComboBox:focus /template/ Border">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="ComboBox:pointerover /template/ Border">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="ComboBox:pressed /template/ Border">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="ComboBoxItem /template/ Border">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style Selector="ComboBoxItem">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style Selector="ComboBoxItem /template/ ContentPresenter">
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="ComboBoxItem:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource ComboBoxItemBackgroundPointerOver}" />
+    </Style>
+
+    <Style Selector="ComboBoxItem:selected /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource ComboBoxItemBackgroundSelected}" />
+    </Style>
+
+    <Style Selector="ComboBoxItem:selected:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource ComboBoxItemBackgroundSelected}" />
+    </Style>
+
+    <!-- ── NumericUpDown ── -->
+    <Style Selector="NumericUpDown">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{DynamicResource WindowFg}" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="ButtonSpinnerLocation" Value="Right" />
+        <Setter Property="ShowButtonSpinner" Value="False" />
+        <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+
+    <Style Selector="NumericUpDown.parameter-numeric">
+           <Setter Property="MinWidth" Value="0" />
+    </Style>
+
+    <Style Selector="ButtonSpinner">
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style Selector="ButtonSpinner Button">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="MinWidth" Value="20" />
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+
+    <Style Selector="ButtonSpinner Button /template/ ContentPresenter">
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <!-- ── CheckBox ── -->
+    <Style Selector="CheckBox">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Foreground" Value="{DynamicResource WindowFg}" />
+    </Style>
+
+    <!-- ── Toolbar button (icon + text) ── -->
+    <Style Selector="Button.toolbar-btn">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{DynamicResource ToolbarBtnFg}" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.toolbar-btn:pointerover /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource ToolbarBtnHoverFg}" />
+        <Setter Property="Background" Value="{DynamicResource ToolbarBtnHoverBg}" />
+    </Style>
+    <Style Selector="Button.toolbar-btn:pressed /template/ ContentPresenter">
+        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="Background" Value="{DynamicResource ToolbarBtnPressedBg}" />
+    </Style>
+
+    <!-- ── ProgressBar ── -->
+    <Style Selector="ProgressBar">
+        <Setter Property="Background" Value="{DynamicResource ProgressBarBg}" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="MinHeight" Value="8" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <!-- ── Separator ── -->
+    <Style Selector="Separator">
+        <Setter Property="Margin" Value="0,8" />
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Background" Value="{DynamicResource SeparatorBg}" />
+    </Style>
+
+    <!-- ── ScrollViewer — always show scrollbars ── -->
+    <Style Selector="ScrollViewer">
+        <Setter Property="AllowAutoHide" Value="False" />
+        <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+
+    <!-- ScrollBar sizing without extra gaps -->
+    <Style Selector="ScrollBar:vertical">
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Width" Value="14" />
+    </Style>
+
+    <Style Selector="ScrollBar:horizontal">
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Height" Value="14" />
+    </Style>
+
+    <Style Selector="ScrollBar /template/ Thumb">
+        <Setter Property="Opacity" Value="1" />
+    </Style>
+
+    <!-- ── TabItem ── -->
+    <Style Selector="TabItem">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="14,8" />
+        <Setter Property="Foreground" Value="{DynamicResource TextDim}" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Foreground" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="TabItem:pointerover">
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+    </Style>
+    <Style Selector="TabItem:selected">
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+    </Style>
+
+    <!-- ── Progress overlay ── -->
+    <Style Selector="Border.progress-overlay">
+        <Setter Property="Background" Value="{DynamicResource ProgressOverlayBg}" />
+    </Style>
+
+    <Style Selector="Border.progress-card">
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="28,24" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ProgressCardBorder}" />
+        <Setter Property="MaxWidth" Value="420" />
+        <Setter Property="MinWidth" Value="360" />
+        <Setter Property="BoxShadow" Value="0 8 32 0 #60000000" />
+        <Setter Property="Background" Value="{DynamicResource ProgressCardBg}" />
+    </Style>
+
+    <!-- ── ListBoxItem ── -->
+    <Style Selector="ListBoxItem">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBoxItem:selected">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBoxItem:selected:pointerover">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBoxItem /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+</Styles>

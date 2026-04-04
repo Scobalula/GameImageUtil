@@ -1,0 +1,105 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform sampler2D lowerHalfTex;
+layout(set = 0, binding = 2) uniform writeonly image2D facePosX;
+layout(set = 0, binding = 3) uniform writeonly image2D faceNegX;
+layout(set = 0, binding = 4) uniform writeonly image2D facePosY;
+layout(set = 0, binding = 5) uniform writeonly image2D faceNegY;
+layout(set = 0, binding = 6) uniform writeonly image2D facePosZ;
+layout(set = 0, binding = 7) uniform writeonly image2D faceNegZ;
+
+layout(push_constant) uniform Params {
+    int faceSize;
+    int mapX;
+    int mapY;
+    int mapZ;
+    int hasLowerHalf;   // 0 = black out lower hemisphere, 1 = sample normally
+    int upperOnly;      // 1 = input is upper hemisphere only (not packed), 0 = packed layout
+    int hasSecondInput; // 1 = lowerHalfTex contains separate lower hemisphere data
+};
+
+float resolveAxis(vec3 dir, int axis) {
+    if (axis == 0) return dir.x;
+    if (axis == 1) return -dir.x;
+    if (axis == 2) return dir.y;
+    if (axis == 3) return -dir.y;
+    if (axis == 4) return dir.z;
+    return -dir.z;
+}
+
+vec3 faceDirection(int face, vec2 uv) {
+    if (face == 0) return normalize(vec3( 1.0, -uv.y, -uv.x));
+    if (face == 1) return normalize(vec3(-1.0, -uv.y,  uv.x));
+    if (face == 2) return normalize(vec3( uv.x,  1.0,  uv.y));
+    if (face == 3) return normalize(vec3( uv.x, -1.0, -uv.y));
+    if (face == 4) return normalize(vec3( uv.x, -uv.y,  1.0));
+    return normalize(vec3(-uv.x, -uv.y, -1.0));
+}
+
+// Encode a 3D direction to packed hemi-octahedral UV.
+// Upper hemisphere (y >= 0) maps to left half, lower to right half.
+// Returns whether the direction maps to the lower hemisphere via isLower.
+// When hasSecondInput == 1, both halves use full [0,1] UV range on separate textures.
+vec2 directionToHemiOctaUv(vec3 dir, out bool isLower) {
+    vec3 n = dir / (abs(dir.x) + abs(dir.y) + abs(dir.z));
+    vec2 oct;
+
+    if (n.y >= 0.0) {
+        isLower = false;
+        oct.x = n.x - n.z;
+        oct.y = n.x + n.z;
+        vec2 uv = vec2(oct.x * 0.5 + 0.5, oct.y * 0.5 + 0.5);
+        if (upperOnly != 0 || hasSecondInput != 0)
+            return uv;
+        return vec2(uv.x * 0.5, uv.y);
+    }
+
+    isLower = true;
+    oct.x = n.z - n.x;
+    oct.y = n.z + n.x;
+    vec2 uv = vec2(oct.x * 0.5 + 0.5, oct.y * 0.5 + 0.5);
+    if (hasSecondInput != 0)
+        return uv;
+    return vec2(0.5 + uv.x * 0.5, uv.y);
+}
+
+void storeFacePixel(int face, ivec2 pos, vec4 pixel) {
+    if (face == 0) imageStore(facePosX, pos, pixel);
+    else if (face == 1) imageStore(faceNegX, pos, pixel);
+    else if (face == 2) imageStore(facePosY, pos, pixel);
+    else if (face == 3) imageStore(faceNegY, pos, pixel);
+    else if (face == 4) imageStore(facePosZ, pos, pixel);
+    else imageStore(faceNegZ, pos, pixel);
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= faceSize || pos.y >= faceSize)
+        return;
+
+    vec2 faceUv = ((vec2(pos) + 0.5) / float(faceSize)) * 2.0 - 1.0;
+
+    for (int face = 0; face < 6; face++) {
+        vec3 cubDir = faceDirection(face, faceUv);
+
+        // Inverse mapping: cubemap direction → hemi-octa sample direction.
+        vec3 mapped = normalize(vec3(
+            resolveAxis(cubDir, mapX),
+            resolveAxis(cubDir, mapY),
+            resolveAxis(cubDir, mapZ)));
+        vec3 hemiInput = vec3(-mapped.x, -mapped.y, mapped.z);
+
+        bool isLower;
+        vec2 hemiUv = directionToHemiOctaUv(hemiInput, isLower);
+        vec4 pixel;
+        if (isLower && hasLowerHalf == 0)
+            pixel = vec4(0.0);
+        else if (isLower && hasSecondInput != 0)
+            pixel = textureLod(lowerHalfTex, hemiUv, 0.0);
+        else
+            pixel = textureLod(inputTex, hemiUv, 0.0);
+        storeFacePixel(face, pos, pixel);
+    }
+}

@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TextureHawk\TextureHawk.csproj" />
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.Graphics2D.Png\RedFox.Graphics2D.Png.csproj" />
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.Graphics2D.Dds\RedFox.Graphics2D.Dds.csproj" />
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.Graphics2D.Bmp\RedFox.Graphics2D.Bmp.csproj" />
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.Graphics2D.Tiff\RedFox.Graphics2D.Tiff.csproj" />
+    <ProjectReference Include="..\..\..\RedFox\src\cs\RedFox.Graphics2D.Exr\RedFox.Graphics2D.Exr.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Shaders\*.spv" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Shaders\*.comp" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Compile shaders if glslangValidator is available -->
+  <Target Name="CompileShaders" BeforeTargets="PrepareForBuild" Condition="Exists('$(VULKAN_SDK)\Bin\glslangValidator.exe') Or '$(GlslangValidator)' != ''">
+    <PropertyGroup>
+      <_GlslangValidator Condition="'$(GlslangValidator)' != ''">$(GlslangValidator)</_GlslangValidator>
+      <_GlslangValidator Condition="'$(GlslangValidator)' == ''">$(VULKAN_SDK)\Bin\glslangValidator.exe</_GlslangValidator>
+    </PropertyGroup>
+    <ItemGroup>
+      <CompShader Include="Shaders\*.comp" />
+    </ItemGroup>
+    <Exec Command="&quot;$(_GlslangValidator)&quot; -V &quot;%(CompShader.Identity)&quot; -o &quot;%(CompShader.RootDir)%(CompShader.Directory)%(CompShader.Filename).spv&quot; --target-env vulkan1.2" WorkingDirectory="$(MSBuildProjectDirectory)" IgnoreExitCode="false" Condition="@(CompShader) != ''" />
+  </Target>
+
+</Project>

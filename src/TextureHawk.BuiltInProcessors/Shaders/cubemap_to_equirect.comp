@@ -1,0 +1,51 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+// Six cubemap faces: +X, -X, +Y, -Y, +Z, -Z
+layout(set = 0, binding = 0) uniform samplerCube cubemapTex;
+layout(set = 0, binding = 1) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    int upAxis;
+    int mapX;
+    int mapY;
+    int mapZ;
+};
+
+const float PI = 3.14159265358979323846;
+
+float resolveAxis(vec3 dir, int axis) {
+    if (axis == 0) return dir.x;
+    if (axis == 1) return -dir.x;
+    if (axis == 2) return dir.y;
+    if (axis == 3) return -dir.y;
+    if (axis == 4) return dir.z;
+    return -dir.z;
+}
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    float uCoord = (float(pos.x) + 0.5) / float(outWidth);
+    float vCoord = (float(pos.y) + 0.5) / float(outHeight);
+
+    float theta = uCoord * 2.0 * PI;
+    float phi   = vCoord * PI;
+    float sinPhi = sin(phi);
+
+    vec3 dir;
+    if (upAxis == 0)
+        dir = vec3(cos(phi), sinPhi * sin(theta), sinPhi * cos(theta));
+    else if (upAxis == 1)
+        dir = vec3(sinPhi * sin(theta), cos(phi), sinPhi * cos(theta));
+    else
+        dir = vec3(sinPhi * cos(theta), sinPhi * sin(theta), cos(phi));
+
+    dir = normalize(vec3(resolveAxis(dir, mapX), resolveAxis(dir, mapY), resolveAxis(dir, mapZ)));
+
+    vec4 pixel = textureLod(cubemapTex, dir, 0.0);
+    imageStore(outputImage, pos, pixel);
+}

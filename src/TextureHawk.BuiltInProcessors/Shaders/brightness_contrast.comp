@@ -1,0 +1,24 @@
+#version 450
+layout(local_size_x = 16, local_size_y = 16) in;
+
+layout(set = 0, binding = 0) uniform sampler2D inputTex;
+layout(set = 0, binding = 1) uniform writeonly image2D outputImage;
+
+layout(push_constant) uniform Params {
+    int outWidth;
+    int outHeight;
+    float brightness;
+    float contrast;
+};
+
+void main() {
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    if (pos.x >= outWidth || pos.y >= outHeight) return;
+
+    vec4 pixel = texelFetch(inputTex, pos, 0);
+
+    // Apply contrast around midpoint 0.5, then add brightness offset
+    vec3 result = (pixel.rgb - 0.5) * contrast + 0.5 + brightness;
+
+    imageStore(outputImage, pos, vec4(clamp(result, 0.0, 1.0), pixel.a));
+}
